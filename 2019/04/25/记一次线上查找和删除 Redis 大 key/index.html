@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>记一次线上查找和删除 Redis 大 key | Castle，专属于自己的领地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="昨天凌晨，因为占用容量峰值为 218 G，DBA 将 Redis 的容量由 500G 调低到了 320G。在调低容量后，Redis 开始频繁报 HighMemoryUsage 的警告。而查看 Redis 集群的监控后发现，总容量用掉的比例不足 60%，不应该频繁报警，因此开始了排查之路。 排查原因首先，我们已经排除了是总容量大小的问题。 由于我们的 Redis 是阿里云的集群版，有多个节点，因此我">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次线上查找和删除 Redis 大 key">
+<meta property="og:url" content="https://www.gonever.com/2019/04/25/%E8%AE%B0%E4%B8%80%E6%AC%A1%E7%BA%BF%E4%B8%8A%E6%9F%A5%E6%89%BE%E5%92%8C%E5%88%A0%E9%99%A4%20Redis%20%E5%A4%A7%20key/">
+<meta property="og:site_name" content="Castle，专属于自己的领地">
+<meta property="og:description" content="昨天凌晨，因为占用容量峰值为 218 G，DBA 将 Redis 的容量由 500G 调低到了 320G。在调低容量后，Redis 开始频繁报 HighMemoryUsage 的警告。而查看 Redis 集群的监控后发现，总容量用掉的比例不足 60%，不应该频繁报警，因此开始了排查之路。 排查原因首先，我们已经排除了是总容量大小的问题。 由于我们的 Redis 是阿里云的集群版，有多个节点，因此我">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-04-24T23:55:56.000Z">
+<meta property="article:modified_time" content="2023-03-13T20:55:50.000Z">
+<meta property="article:author" content="Chen Gangyang">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Castle，专属于自己的领地" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Castle，专属于自己的领地</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">我的沉思、笔记和回忆</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://www.gonever.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-记一次线上查找和删除 Redis 大 key" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/04/25/%E8%AE%B0%E4%B8%80%E6%AC%A1%E7%BA%BF%E4%B8%8A%E6%9F%A5%E6%89%BE%E5%92%8C%E5%88%A0%E9%99%A4%20Redis%20%E5%A4%A7%20key/" class="article-date">
+  <time class="dt-published" datetime="2019-04-24T23:55:56.000Z" itemprop="datePublished">2019-04-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      记一次线上查找和删除 Redis 大 key
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>昨天凌晨，因为占用容量峰值为 218 G，DBA 将 Redis 的容量由 500G 调低到了 320G。在调低容量后，Redis 开始频繁报 <code>HighMemoryUsage</code> 的警告。而查看 Redis 集群的监控后发现，总容量用掉的比例不足 60%，不应该频繁报警，因此开始了排查之路。</p>
+<h2 id="排查原因"><a href="#排查原因" class="headerlink" title="排查原因"></a>排查原因</h2><p>首先，我们已经排除了是总容量大小的问题。</p>
+<p>由于我们的 Redis 是阿里云的集群版，有多个节点，因此我查看了各个节点的大小。果然，最大的节点已经超过 90%，而小的节点的占用则在 30% 左右。这说明 Redis 发生了非常严重的倾斜。</p>
+<p>我们现有的程序已经充分考虑到了 Redis 集群的特性，<code>key</code> 设计策略没有问题，不应该出现如此大的倾斜，所以问题在其他方面。</p>
+<p>我们用阿里云的 python 脚本来查询 Redis 大 key，果真发现有一些很老的废弃的大 key，key 为 hash 类型，每个的长度在 500 万以上，最长的接近 1000 万。因此，倾斜的原因是这些大 key 的存在，且这些大 key 在不同节点分布不均匀。</p>
+<h3 id="找出大-key"><a href="#找出大-key" class="headerlink" title="找出大 key"></a>找出大 key</h3><p>由于阿里云的 python 脚本非常慢，因此我写了一个 golang 的脚本来查找大 key。</p>
+<p>因为阿里云集群版 Redis 做了一些改造，因此需要使用 <code>iscan</code> 命令（<a target="_blank" rel="noopener" href="https://www.alibabacloud.com/help/zh/doc-detail/26356.htm">阿里云Redis命令列表</a>）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">for i := 0; i &lt; 32; i++ &#123;</span><br><span class="line">    fmt.Printf(&quot;node %d start\n&quot;, i)</span><br><span class="line">    var cursor int</span><br><span class="line">    for &#123;</span><br><span class="line">        values, err := redis.Values(r.Do(&quot;ISCAN&quot;, i, cursor, &quot;COUNT&quot;, 500, &quot;MATCH&quot;, &quot;rc:2019*&quot;))</span><br><span class="line">        if err != nil &#123;</span><br><span class="line">            fmt.Println(err)</span><br><span class="line">            return</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        cursor, err = redis.Int(values[0], nil)</span><br><span class="line">        //fmt.Println(cursor)</span><br><span class="line">        if err != nil &#123;</span><br><span class="line">            fmt.Println(err)</span><br><span class="line">            return</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        items, err := redis.Strings(values[1], nil)</span><br><span class="line">        if err != nil &#123;</span><br><span class="line">            fmt.Println(err)</span><br><span class="line">            return</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        for i := range items &#123;</span><br><span class="line">            t, err := redis.String(r.Do(&quot;TYPE&quot;, items[i]))</span><br><span class="line">            if err != nil &#123;</span><br><span class="line">                fmt.Println(t)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            var l int</span><br><span class="line"></span><br><span class="line">            switch t &#123;</span><br><span class="line">            case &quot;string&quot;:</span><br><span class="line">                l, _ = redis.Int(r.Do(&quot;STRLEN&quot;, items[i]))</span><br><span class="line">            case &quot;hash&quot;:</span><br><span class="line">                l, _ = redis.Int(r.Do(&quot;HLEN&quot;, items[i]))</span><br><span class="line">            case &quot;set&quot;:</span><br><span class="line">                l, _ = redis.Int(r.Do(&quot;SCARD&quot;, items[i]))</span><br><span class="line">            case &quot;zset&quot;:</span><br><span class="line">                l, _ = redis.Int(r.Do(&quot;ZCARD&quot;, items[i]))</span><br><span class="line">            case &quot;list&quot;:</span><br><span class="line">                l, _ = redis.Int(r.Do(&quot;LLEN&quot;, items[i]))</span><br><span class="line">            &#125;</span><br><span class="line">            fmt.Printf(&quot;key: %s, length: %d\n&quot;, items[i], l)</span><br><span class="line">            if l &gt; bigKeyLen &#123;</span><br><span class="line">                fmt.Printf(&quot;find big key: %s, len: %d\n&quot;, items[i], l)</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                err := r.Send(&quot;DEL&quot;, items[i])</span><br><span class="line">                if err != nil &#123;</span><br><span class="line">                    fmt.Println(err)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        err = r.Flush()</span><br><span class="line">        if err != nil &#123;</span><br><span class="line">            fmt.Println(err)</span><br><span class="line">        &#125;</span><br><span class="line">        if cursor == 0 &#123;</span><br><span class="line">            fmt.Printf(&quot;node %d end\n&quot;, i)</span><br><span class="line">            break</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这里，如果发现了应该删除的小 key ，我们直接删掉，并将大 key 找了出来。</p>
+<h2 id="删除大-key"><a href="#删除大-key" class="headerlink" title="删除大 key"></a>删除大 key</h2><p>因为 Redis 的特性，删除大 key 可能会导致线程阻塞，其他请求无法接收造成应用闪崩。因此我需要将大 key 的元素逐步清空，再移除这个 key（在 Redis 4.0 以上版本中，可以直接使用 unlink 命令另外启动一个线程来删除大 key）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">for &#123;</span><br><span class="line">    values, err := redis.Values(r.Do(&quot;HSCAN&quot;, bigKey, cursor, &quot;COUNT&quot;, 100))</span><br><span class="line">    if err != nil &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">        return</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cursor, err = redis.Int64(values[0], nil)</span><br><span class="line">    if err != nil &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">        return</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    items, err = redis.Int64Map(values[1], nil)</span><br><span class="line">    if err != nil &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">        return</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    for key := range items &#123;</span><br><span class="line">        err := r.Send(&quot;HDEL&quot;, bigKey, key)</span><br><span class="line">        if err != nil &#123;</span><br><span class="line">            fmt.Println(err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    err = r.Flush()</span><br><span class="line">    if err != nil &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if cursor == 0 &#123;</span><br><span class="line">        break</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">_, err = redis.Do(&quot;DEL&quot;, bigKey)</span><br><span class="line"></span><br><span class="line">if err != nil &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样便完成了大 key 的删除。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在确定 Redis 分布不均匀后，我们要首先检查是否是有大 key，如果有的话要逐步清除，不能影响业务。之后需要选择合适的方案设计 Redis key，使其均匀的分布在各个节点。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2019/04/25/%E8%AE%B0%E4%B8%80%E6%AC%A1%E7%BA%BF%E4%B8%8A%E6%9F%A5%E6%89%BE%E5%92%8C%E5%88%A0%E9%99%A4%20Redis%20%E5%A4%A7%20key/" data-id="cljcm06v00067hev6fc4agho9" data-title="记一次线上查找和删除 Redis 大 key" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/07/04/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%A7%A3%E5%86%B3%E7%BA%BF%E4%B8%8A%20Redis%20%E9%9B%86%E7%BE%A4%E5%8D%95%E8%8A%82%E7%82%B9%20CPU%20%E5%81%8F%E9%AB%98%E9%97%AE%E9%A2%98/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          记一次解决线上 Redis 集群单节点 CPU 偏高问题
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/04/22/du%20%E5%91%BD%E4%BB%A4%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">du 命令的使用方法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORS/" rel="tag">CORS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeetCode/" rel="tag">LeetCode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Plan/" rel="tag">Plan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%82%9F/" rel="tag">感悟</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" rel="tag">诗词赋</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AC%E8%BD%BD/" rel="tag">转载</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CORS/" style="font-size: 10px;">CORS</a> <a href="/tags/Docker/" style="font-size: 11px;">Docker</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/LeetCode/" style="font-size: 16px;">LeetCode</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/MySQL/" style="font-size: 18px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 12px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 11px;">PHP</a> <a href="/tags/Plan/" style="font-size: 10px;">Plan</a> <a href="/tags/Redis/" style="font-size: 12px;">Redis</a> <a href="/tags/%E6%84%9F%E6%82%9F/" style="font-size: 14px;">感悟</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">技术</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 13px;">服务器</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 10px;">算法</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" style="font-size: 17px;">诗词赋</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">五月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">十二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/01/13/%E4%BD%BF%E7%94%A8%20awk%20%E5%91%BD%E4%BB%A4%E7%AD%9B%E9%80%89%20csv%20%E6%8C%87%E5%AE%9A%E8%A1%8C/">使用 awk 命令筛选 csv 指定行</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/17/linux%20%E6%9B%BF%E6%8D%A2%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2/">linux 替换多行字符串</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/07/%E8%A5%BF%E5%9B%AD%E5%90%9F/">西园吟</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/22/%E5%B0%91%E5%B9%B4%E6%B8%B8/">少年游</a>
+          </li>
+        
+          <li>
+            <a href="/2022/02/10/%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%20tcpdump%20%E7%9A%84%E4%BD%BF%E7%94%A8/">网络抓包工具 tcpdump 的使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Chen Gangyang<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

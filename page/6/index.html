@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Castle，专属于自己的领地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Castle，专属于自己的领地">
+<meta property="og:url" content="https://www.gonever.com/page/6/">
+<meta property="og:site_name" content="Castle，专属于自己的领地">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="Chen Gangyang">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Castle，专属于自己的领地" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Castle，专属于自己的领地</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">我的沉思、笔记和回忆</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://www.gonever.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-使用 Shell 根据 ip 和子网掩码获取网络号" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/01/19/%E4%BD%BF%E7%94%A8%20Shell%20%E6%A0%B9%E6%8D%AE%20ip%20%E5%92%8C%E5%AD%90%E7%BD%91%E6%8E%A9%E7%A0%81%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E5%8F%B7/" class="article-date">
+  <time class="dt-published" datetime="2018-01-19T07:57:43.000Z" itemprop="datePublished">2018-01-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/01/19/%E4%BD%BF%E7%94%A8%20Shell%20%E6%A0%B9%E6%8D%AE%20ip%20%E5%92%8C%E5%AD%90%E7%BD%91%E6%8E%A9%E7%A0%81%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E5%8F%B7/">使用 Shell 根据 ip 和子网掩码获取网络号</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>ip 和子网掩码进行与运算的结果就是网络号。</p>
+<p>这里用到了 cut 命令和逻辑运算来求出了网络号。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ip=$1</span><br><span class="line">mask=$2</span><br><span class="line">out=&#x27;&#x27;</span><br><span class="line">for index in &#123;1..4&#125;; do</span><br><span class="line">    si=$(echo $ip | cut -d &quot;.&quot; -f $index)</span><br><span class="line">    sm=$(echo $mask | cut -d &quot;.&quot; -f $index)</span><br><span class="line">    if [ $index -ne 1 ]</span><br><span class="line">    then</span><br><span class="line">        out=&quot;$out.&quot;</span><br><span class="line">    fi</span><br><span class="line">    out=&quot;$out$[$si&amp;$sm]&quot;</span><br><span class="line">done</span><br><span class="line">echo $out</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/01/19/%E4%BD%BF%E7%94%A8%20Shell%20%E6%A0%B9%E6%8D%AE%20ip%20%E5%92%8C%E5%AD%90%E7%BD%91%E6%8E%A9%E7%A0%81%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E5%8F%B7/" data-id="cljcm06uh004thev6gaogfovu" data-title="使用 Shell 根据 ip 和子网掩码获取网络号" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-PHP SPL 学习笔记 （一）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/01/11/PHP%20SPL%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20%EF%BC%88%E4%B8%80%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2018-01-11T08:53:54.000Z" itemprop="datePublished">2018-01-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/01/11/PHP%20SPL%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20%EF%BC%88%E4%B8%80%EF%BC%89/">PHP SPL 学习笔记 （一）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>SPL 是 PHP 的标准库，定义了一些类和接口，让 PHP 的功能更加丰富。</p>
+<p>早就计划对 SPL 进行系统的学习，这里对学习做一些基本的笔记。</p>
+<p>先说遍历，能够遍历的类都要实现 Traversable 接口，但是 Traversable 接口不能被单独实现，只能通过实现他的子接口 Iterator 和 IteratorAggregate 来实现 Traversable 接口。因此只要实现了这两个接口中的任何一个，就能让对象用<code>foreach</code>进行遍历。（从 PHP5 开始，任何类如果未实现 Traversable，对类的遍历会转化为对类的公共属性的遍历）。</p>
+<h2 id="Iterator-接口"><a href="#Iterator-接口" class="headerlink" title="Iterator 接口"></a>Iterator 接口</h2><p>所有实现了 Iterator 接口的类，都可以进行遍历。实现 Iterator 接口需要实现 5 个方法。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">interface Iterator extends Traversable &#123;</span><br><span class="line">    //返回迭代器当前元素</span><br><span class="line">    public function current();</span><br><span class="line">    //移动迭代器位置到下一个</span><br><span class="line">    public function next();</span><br><span class="line">    //返回返回迭代器当前元素的键名</span><br><span class="line">    public function key();</span><br><span class="line">    //检查迭代器当前位置是否有效</span><br><span class="line">    public function valid();</span><br><span class="line">    //恢复迭代器的初始位置</span><br><span class="line">    public function rewind();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>举个栗子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">class MenIterator implements Iterator</span><br><span class="line">&#123;</span><br><span class="line">    public $men = [];</span><br><span class="line">    public $position = 0;</span><br><span class="line"></span><br><span class="line">    public function current()</span><br><span class="line">    &#123;</span><br><span class="line">        return $this-&gt;men[$this-&gt;position];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public function next()</span><br><span class="line">    &#123;</span><br><span class="line">        $this-&gt;position++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public function rewind()</span><br><span class="line">    &#123;</span><br><span class="line">        $this-&gt;position = 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public function valid()</span><br><span class="line">    &#123;</span><br><span class="line">        return isset($this-&gt;men[$this-&gt;position]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public function key()</span><br><span class="line">    &#123;</span><br><span class="line">        return $this-&gt;position;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过此接口可以灵活地对任何对象实现遍历操作。</p>
+<h1 id="IteratorAggregate"><a href="#IteratorAggregate" class="headerlink" title="IteratorAggregate"></a>IteratorAggregate</h1><p>IteratorAggregate 接口和 Iterator 一样，实现了 IteratorAggregte 接口的类也可以进行遍历。Iterator 隐性的通过 <code>getIterator</code> 方法返回一个迭代器，本质上仍然相当于实现了 Iterator 接口。使用这种方式符合“多用组合，少用继承”的面向对象设计思想。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">interface IteratorAggregate extends Traversable &#123;</span><br><span class="line">    public function getIterator();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>getIterator 方法必须返回一个 Iterator 实例。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">class Men &#123;</span><br><span class="line">    public function __construct()&#123;</span><br><span class="line">        //MenIterator见上例</span><br><span class="line">        $this-&gt;men = new MenIterator;</span><br><span class="line">        $this-&gt;men-&gt;men = [&quot;a&quot;, &quot;b&quot;];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public function getIterator()&#123;</span><br><span class="line">         return $this-&gt;men;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样，Men 类的实例便可以使用 <code>foreach</code>进行遍历了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/01/11/PHP%20SPL%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20%EF%BC%88%E4%B8%80%EF%BC%89/" data-id="cljcm06tk002khev60adz3s1r" data-title="PHP SPL 学习笔记 （一）" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-MySQL 的乐观锁和悲观锁" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/01/10/MySQL%20%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E5%92%8C%E6%82%B2%E8%A7%82%E9%94%81/" class="article-date">
+  <time class="dt-published" datetime="2018-01-10T07:40:35.000Z" itemprop="datePublished">2018-01-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/01/10/MySQL%20%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E5%92%8C%E6%82%B2%E8%A7%82%E9%94%81/">MySQL 的乐观锁和悲观锁</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h2><p>乐观锁是假设不冲突，在提交的时候判断是否冲突。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#先查出version</span><br><span class="line">select id, version from tbl_name where id = 100;</span><br><span class="line">#更新时保证 version 没有发生变化</span><br><span class="line">update tbl_name set ..., version = version + 1 where id = 100 and version = last_version;</span><br></pre></td></tr></table></figure>
+
+<h2 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h2><p>悲观锁是假设一定会发生冲突，取出数据时就不允许别的操作者取出该条数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select id from tbl_name where id = 100 for update</span><br><span class="line">update tbl_name set ... where id = 100;</span><br></pre></td></tr></table></figure>
+
+<p>前者能够避免死锁，但是如果必须完成此次更新则需要多次尝试。后者必须等待之前操作完成才能完成。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/01/10/MySQL%20%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E5%92%8C%E6%82%B2%E8%A7%82%E9%94%81/" data-id="cljcm06te0024hev6498veo3m" data-title="MySQL 的乐观锁和悲观锁" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-MySQL 学习笔记（二）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/01/07/MySQL%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2018-01-07T07:18:22.000Z" itemprop="datePublished">2018-01-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/01/07/MySQL%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/">MySQL 学习笔记（二）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="创建表并指定引擎"><a href="#创建表并指定引擎" class="headerlink" title="创建表并指定引擎"></a>创建表并指定引擎</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE tbl_name(column column_type) ENGINE = ENGINE_NAME</span><br></pre></td></tr></table></figure>
+
+<p>例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE t (i int) ENGINE = ARCHIVE</span><br></pre></td></tr></table></figure>
+
+<h2 id="创建表并指定字符集和排序方式"><a href="#创建表并指定字符集和排序方式" class="headerlink" title="创建表并指定字符集和排序方式"></a>创建表并指定字符集和排序方式</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE tbl_name (column column_type) CHARACTER SET charset COLLATE collation</span><br></pre></td></tr></table></figure>
+
+<h2 id="创建临时表"><a href="#创建临时表" class="headerlink" title="创建临时表"></a>创建临时表</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TEMPORARY TABLE ...</span><br></pre></td></tr></table></figure>
+
+<h2 id="复制表结构和数据"><a href="#复制表结构和数据" class="headerlink" title="复制表结构和数据"></a>复制表结构和数据</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE new_tbl_name LIKE old_tbl_name;</span><br><span class="line">INSERT INTO new_tbl_name SELECT * FROM old_tbl_name;</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE new_tbl_name SELECT field1, field2 FROM old_tbl_name where ...</span><br></pre></td></tr></table></figure>
+
+<p>后者既灵活又简单，可以选择需要的列，但是如果复制整张表的话前者更安全、不会出错。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/01/07/MySQL%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/" data-id="cljcm06tc001xhev62vsj30fd" data-title="MySQL 学习笔记（二）" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-MySQL  的大小写规则" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/01/07/MySQL%20%20%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99%E8%A7%84%E5%88%99/" class="article-date">
+  <time class="dt-published" datetime="2018-01-07T05:08:00.000Z" itemprop="datePublished">2018-01-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/01/07/MySQL%20%20%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99%E8%A7%84%E5%88%99/">MySQL  的大小写规则</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ol>
+<li><strong>SQL 关键字和函数名。</strong> SQL 的关键字和函数名不区分大小写。</li>
+<li><strong>数据库名、表名和视图名。</strong>和服务器主机的操作系统在文件名方面的规定保持一致。Linux 和 Unix 区分大小写，MacOS 不区分大小写，Windows不区分大小写。</li>
+<li><strong>存储程序的名字。</strong>存储函数、存储过程和事件的名字不区分大小写，触发器的名字区分大小写。</li>
+<li><strong>列名和索引名。</strong>列名和索引名不区分大小写。</li>
+<li><strong>别名的名字。</strong>不区分大小写。</li>
+<li><strong>字符串值。</strong>二进制数据区分大小写，非二进制取决于字符串的排序规则。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/01/07/MySQL%20%20%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99%E8%A7%84%E5%88%99/" data-id="cljcm06t8001nhev62tytfzdv" data-title="MySQL  的大小写规则" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-vim 的基本使用" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2017/12/15/vim%20%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" class="article-date">
+  <time class="dt-published" datetime="2017-12-15T05:50:34.000Z" itemprop="datePublished">2017-12-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2017/12/15/vim%20%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">vim 的基本使用</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set encoding=utf-8set rulerset numberset nowrapset ciset ts=4set sw=4syntax enableset history=1000set wildmenuset expandtabset helplang=cnset sts=4set showmatchset hlsearchfiletype onfiletype plugin onfiletype indent onset autowriteset cursorlineset autoreadset scrolloff=2set autoindent</span><br><span class="line">set backspace=indent,eol,startcolorscheme molokailet g:molokai_original = 1let g:rehash256 = 1set guifont=Source\ Code\ Pro\ Regular:h16set background=darkif has(&quot;autocmd&quot;)  au BufReadPost * if line(&quot;&#x27;\&quot;&quot;) &gt; 0|if line(&quot;&#x27;\&quot;&quot;) &lt;= line(&quot;$&quot;)|exe(&quot;norm &#x27;\&quot;&quot;)|else|exe &quot;norm $&quot;|endif|endifendif</span><br></pre></td></tr></table></figure>
+
+<h2 id="主题"><a href="#主题" class="headerlink" title="主题"></a>主题</h2><h3 id="查看主题"><a href="#查看主题" class="headerlink" title="查看主题"></a>查看主题</h3><p>执行以下命令（将 vim80 替换为自己的版本，可以到相应目录下 <code>ls</code> 一下即可）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls /usr/share/vim/vim80/colors</span><br></pre></td></tr></table></figure>
+
+<p>列表中的文件就是可使用的 vim 主题。</p>
+<h3 id="添加主题"><a href="#添加主题" class="headerlink" title="添加主题"></a>添加主题</h3><p>下载相对应的主题文件到 <code>/usr/share/vim/vim80/colors</code> 或者到 <code>~/.vim/colors</code>即可。</p>
+<p>如拷贝 <a target="_blank" rel="noopener" href="https://github.com/tomasr/molokai/blob/master/colors/molokai.vim">https://github.com/tomasr/molokai/blob/master/colors/molokai.vim</a> 到对应的文件夹便可以使用 molokai 主题了。</p>
+<h3 id="使用主题"><a href="#使用主题" class="headerlink" title="使用主题"></a>使用主题</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">colorscheme molokai</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2017/12/15/vim%20%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" data-id="cljcm06u1003vhev6fx3h0nm1" data-title="vim 的基本使用" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-ascii 码对照表" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2017/12/15/ascii%20%E7%A0%81%E5%AF%B9%E7%85%A7%E8%A1%A8/" class="article-date">
+  <time class="dt-published" datetime="2017-12-15T05:00:32.000Z" itemprop="datePublished">2017-12-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2017/12/15/ascii%20%E7%A0%81%E5%AF%B9%E7%85%A7%E8%A1%A8/">ascii 码对照表</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>ASCII值</p>
+<p>控制字符</p>
+<p>ASCII值</p>
+<p>控制字符</p>
+<p>ASCII值</p>
+<p>控制字符</p>
+<p>ASCII值</p>
+<p>控制字符</p>
+<p>0</p>
+<p>NUT</p>
+<p>32</p>
+<p>(space)</p>
+<p>64</p>
+<p>@</p>
+<p>96</p>
+<p>、</p>
+<p>1</p>
+<p>SOH</p>
+<p>33</p>
+<p>!</p>
+<p>65</p>
+<p>A</p>
+<p>97</p>
+<p>a</p>
+<p>2</p>
+<p>STX</p>
+<p>34</p>
+<p>“</p>
+<p>66</p>
+<p>B</p>
+<p>98</p>
+<p>b</p>
+<p>3</p>
+<p>ETX</p>
+<p>35</p>
+<h1 id=""><a href="#" class="headerlink" title=""></a></h1><p>67</p>
+<p>C</p>
+<p>99</p>
+<p>c</p>
+<p>4</p>
+<p>EOT</p>
+<p>36</p>
+<p>$</p>
+<p>68</p>
+<p>D</p>
+<p>100</p>
+<p>d</p>
+<p>5</p>
+<p>ENQ</p>
+<p>37</p>
+<p>%</p>
+<p>69</p>
+<p>E</p>
+<p>101</p>
+<p>e</p>
+<p>6</p>
+<p>ACK</p>
+<p>38</p>
+<p>&amp;</p>
+<p>70</p>
+<p>F</p>
+<p>102</p>
+<p>f</p>
+<p>7</p>
+<p>BEL</p>
+<p>39</p>
+<p>,</p>
+<p>71</p>
+<p>G</p>
+<p>103</p>
+<p>g</p>
+<p>8</p>
+<p>BS</p>
+<p>40</p>
+<p>(</p>
+<p>72</p>
+<p>H</p>
+<p>104</p>
+<p>h</p>
+<p>9</p>
+<p>HT</p>
+<p>41</p>
+<p>)</p>
+<p>73</p>
+<p>I</p>
+<p>105</p>
+<p>i</p>
+<p>10</p>
+<p>LF</p>
+<p>42</p>
+<p>*</p>
+<p>74</p>
+<p>J</p>
+<p>106</p>
+<p>j</p>
+<p>11</p>
+<p>VT</p>
+<p>43</p>
+<ul>
+<li></li>
+</ul>
+<p>75</p>
+<p>K</p>
+<p>107</p>
+<p>k</p>
+<p>12</p>
+<p>FF</p>
+<p>44</p>
+<p>,</p>
+<p>76</p>
+<p>L</p>
+<p>108</p>
+<p>l</p>
+<p>13</p>
+<p>CR</p>
+<p>45</p>
+<p>-</p>
+<p>77</p>
+<p>M</p>
+<p>109</p>
+<p>m</p>
+<p>14</p>
+<p>SO</p>
+<p>46</p>
+<p>.</p>
+<p>78</p>
+<p>N</p>
+<p>110</p>
+<p>n</p>
+<p>15</p>
+<p>SI</p>
+<p>47</p>
+<p>&#x2F;</p>
+<p>79</p>
+<p>O</p>
+<p>111</p>
+<p>o</p>
+<p>16</p>
+<p>DLE</p>
+<p>48</p>
+<p>0</p>
+<p>80</p>
+<p>P</p>
+<p>112</p>
+<p>p</p>
+<p>17</p>
+<p>DCI</p>
+<p>49</p>
+<p>1</p>
+<p>81</p>
+<p>Q</p>
+<p>113</p>
+<p>q</p>
+<p>18</p>
+<p>DC2</p>
+<p>50</p>
+<p>2</p>
+<p>82</p>
+<p>R</p>
+<p>114</p>
+<p>r</p>
+<p>19</p>
+<p>DC3</p>
+<p>51</p>
+<p>3</p>
+<p>83</p>
+<p>S</p>
+<p>115</p>
+<p>s</p>
+<p>20</p>
+<p>DC4</p>
+<p>52</p>
+<p>4</p>
+<p>84</p>
+<p>T</p>
+<p>116</p>
+<p>t</p>
+<p>21</p>
+<p>NAK</p>
+<p>53</p>
+<p>5</p>
+<p>85</p>
+<p>U</p>
+<p>117</p>
+<p>u</p>
+<p>22</p>
+<p>SYN</p>
+<p>54</p>
+<p>6</p>
+<p>86</p>
+<p>V</p>
+<p>118</p>
+<p>v</p>
+<p>23</p>
+<p>TB</p>
+<p>55</p>
+<p>7</p>
+<p>87</p>
+<p>W</p>
+<p>119</p>
+<p>w</p>
+<p>24</p>
+<p>CAN</p>
+<p>56</p>
+<p>8</p>
+<p>88</p>
+<p>X</p>
+<p>120</p>
+<p>x</p>
+<p>25</p>
+<p>EM</p>
+<p>57</p>
+<p>9</p>
+<p>89</p>
+<p>Y</p>
+<p>121</p>
+<p>y</p>
+<p>26</p>
+<p>SUB</p>
+<p>58</p>
+<p>:</p>
+<p>90</p>
+<p>Z</p>
+<p>122</p>
+<p>z</p>
+<p>27</p>
+<p>ESC</p>
+<p>59</p>
+<p>;</p>
+<p>91</p>
+<p>[</p>
+<p>123</p>
+<p>{</p>
+<p>28</p>
+<p>FS</p>
+<p>60</p>
+<p>&lt;</p>
+<p>92</p>
+<p>&#x2F;</p>
+<p>124</p>
+<p>|</p>
+<p>29</p>
+<p>GS</p>
+<p>61</p>
+<p>=</p>
+<p>93</p>
+<p>]</p>
+<p>125</p>
+<p>}</p>
+<p>30</p>
+<p>RS</p>
+<p>62</p>
+<p>&gt;</p>
+<p>94</p>
+<p>^</p>
+<p>126</p>
+<p>`</p>
+<p>31</p>
+<p>US</p>
+<p>63</p>
+<p>?</p>
+<p>95</p>
+<p>_</p>
+<p>127</p>
+<p>DEL</p>
+<p>特殊字符解释</p>
+<p>NUL空</p>
+<p>VT 垂直制表</p>
+<p>SYN 空转同步</p>
+<p>STX 正文开始</p>
+<p>CR 回车</p>
+<p>CAN 作废</p>
+<p>ETX 正文结束</p>
+<p>SO 移位输出</p>
+<p>EM 纸尽</p>
+<p>EOY 传输结束</p>
+<p>SI 移位输入</p>
+<p>SUB 换置</p>
+<p>ENQ 询问字符</p>
+<p>DLE 空格</p>
+<p>ESC 换码</p>
+<p>ACK 承认</p>
+<p>DC1 设备控制1</p>
+<p>FS 文字分隔符</p>
+<p>BEL 报警</p>
+<p>DC2 设备控制2</p>
+<p>GS 组分隔符</p>
+<p>BS 退一格</p>
+<p>DC3 设备控制3</p>
+<p>RS 记录分隔符</p>
+<p>HT 横向列表</p>
+<p>DC4 设备控制4</p>
+<p>US 单元分隔符</p>
+<p>LF 换行</p>
+<p>NAK 否定</p>
+<p>DEL 删除</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2017/12/15/ascii%20%E7%A0%81%E5%AF%B9%E7%85%A7%E8%A1%A8/" data-id="cljcm06ts0036hev61ked9z1x" data-title="ascii 码对照表" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-MySQL 规范" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2017/11/29/MySQL%20%E8%A7%84%E8%8C%83/" class="article-date">
+  <time class="dt-published" datetime="2017-11-29T01:22:26.000Z" itemprop="datePublished">2017-11-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2017/11/29/MySQL%20%E8%A7%84%E8%8C%83/">MySQL 规范</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>基础规范：<br>（1）必须使用InnoDB存储引擎<br>（2）使用utf8mb4字符集<br>（3）数据表、数据字段必须加入中文注释<br>（4）禁止使用存储过程、视图、触发器、Event<br>（5）禁止存储大文件或者大照片<br>-–大文件和照片存储在文件系统，数据库里存URI就好</p>
+<p>命名规范：<br>库名、表名：小写，下划线风格，不超过32个字符，必须见名知意（不要用生僻英文），禁止拼音英文混用；<br>字段名：禁用关键字命名；小写为主，两个单词间首字母大写，例如：cardName，cardId；<br>时间字段dateline: (datetime) 为主，如有另一种用途再议；<br>非唯一索引名idx_xxx，唯一索引名uniq_xxx;</p>
+<p>表设计规范<br>（1）单实例表数目必须小于500<br>（2）单表列数目必须小于30<br>（3）表必须有主键，例如自增主键<br>a）主键递增，数据行写入可以提高插入性能，可以避免page分裂，减少表碎片提升空间和内存的使用<br>b）主键要选择较短的数据类型， Innodb引擎普通索引都会保存主键的值，较短的数据类型可以有效的减少索引的磁盘空间，提高索引的缓存效率<br>c） 无主键的表删除，在row模式的主从架构，会导致备库夯住<br>（4）禁止使用外键，如果有外键完整性约束，需要应用程序控制<br>外键会导致表与表之间耦合，update与delete操作都会涉及相关联的表，十分影响sql 的性能，甚至会造成死锁。高并发情况下容易造成数据库性能，大数据高并发业务场景数据库使用以性能优先</p>
+<p>字段设计：<br>（1）禁止使用小数存储货币<br>小数容易导致钱对不上（四舍五入问题，保留小数位不一致会出问题）<br>（2）尽量少使用ENUM，可使用TINYINT代替<br>a）增加新的ENUM值要做DDL操作<br>b）ENUM的内部实际存储就是整数<br>（3）拒绝text和blob类型<br>实在避免不了要用text和blob类型，拆表吧。或者弄成本地保存，多机器分片存储。</p>
+<p>索引设计规范：<br>（1）单表索引建议控制在5个以内<br>（2）单索引字段数不允许超过5个<br>字段超过5个时，实际已经起不到有效过滤数据的作用了<br>（3）禁止在更新十分频繁、区分度不高的属性上建立索引<br>a）更新会变更B+树，更新频繁的字段建立索引会大大降低数据库性能<br>b）“性别”这种区分度不大的属性，建立索引是没有什么意义的，不能有效过滤数据，性能与全表扫描类似<br>（4）建立组合索引，必须把区分度高的字段放在前面<br>能够更加有效的过滤数据</p>
+<p>SQL使用规范<br>（1）禁止（少用）使用SELECT *，只获取必要的字段，需要显示说明列属性<br>a）读取不需要的列会增加CPU、IO、NET消耗<br>b）不能有效的利用覆盖索引<br>c）使用SELECT *容易在增加或者删除字段后出现程序BUG<br>（2）禁止使用INSERT INTO t_xxx VALUES(xxx)，必须显示指定插入的列属性<br>容易在增加或者删除字段后出现程序BUG<br>（3）禁止使用属性隐式转换<br>（4）禁止在WHERE条件的属性上使用函数或者表达式<br>SELECT uid FROM t_user WHERE from_unixtime(day)&gt;&#x3D;’2017-02-15’ 会导致全表扫描<br>正确的写法是：SELECT uid FROM t_user WHERE day&gt;&#x3D; unix_timestamp(‘2017-02-15 00:00:00’)<br>（5）禁止负向查询，以及%开头的模糊查询<br>a）负向查询条件：NOT、!&#x3D;、&lt;&gt;、!&lt;、!&gt;、NOT IN、NOT LIKE等，会导致全表扫描<br>b）%开头的模糊查询，会导致全表扫描<br>（6）禁止大表使用JOIN查询，禁止大表使用子查询<br>解读：会产生临时表，消耗较多内存与CPU，极大影响数据库性能<br>（7）禁止使用(尽量少用)OR条件，必须改为IN查询<br>旧版本Mysql的OR查询是不能命中索引的，即使能命中索引，为何要让数据库耗费更多的CPU帮助实施查询优化呢？<br>（8）应用程序必须捕获SQL异常，并有相应处理</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2017/11/29/MySQL%20%E8%A7%84%E8%8C%83/" data-id="cljcm06tf0027hev61artcgc1" data-title="MySQL 规范" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-Nginx 开启基本 http 认证" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2017/10/11/Nginx%20%E5%BC%80%E5%90%AF%E5%9F%BA%E6%9C%AC%20http%20%E8%AE%A4%E8%AF%81/" class="article-date">
+  <time class="dt-published" datetime="2017-10-11T09:19:55.000Z" itemprop="datePublished">2017-10-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2017/10/11/Nginx%20%E5%BC%80%E5%90%AF%E5%9F%BA%E6%9C%AC%20http%20%E8%AE%A4%E8%AF%81/">Nginx 开启基本 http 认证</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>有时候我们的网站仅仅是为了提供简单的查询服务，但是又要保密，这时候如果写一个认证服务又没什么必要，这时候使用 Nginx 的“约束访问”功能可以轻松地实现基本认证服务。</p>
+<h2 id="开启认证"><a href="#开启认证" class="headerlink" title="开启认证"></a>开启认证</h2><p>简单地更改 Nginx 的配置文件便可开启认证。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auth_basic &quot;restircted&quot;;#启用http基本认证，以字符串作为域的名字。</span><br><span class="line">auth_basic_user_file conf/htpasswd;#认证文件的位置，这里要特别注意，否则会发生403错误</span><br></pre></td></tr></table></figure>
+
+<h2 id="生成认证文件"><a href="#生成认证文件" class="headerlink" title="生成认证文件"></a>生成认证文件</h2><p>认证文件的格式是<code>username:password:comment</code>，<code>password</code>部分需加密处理，<code>comment</code>部分为可选部分。</p>
+<h3 id="使用htpasswd生成认证文件"><a href="#使用htpasswd生成认证文件" class="headerlink" title="使用htpasswd生成认证文件"></a>使用<code>htpasswd</code>生成认证文件</h3><p>apache 提供了一个<code>htpasswd</code>命令用来生成认证密钥。如果没有这个命令，需要先安装这个工具。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install httpd-tools-2.4.6-67.el7.centos.x86_64</span><br></pre></td></tr></table></figure>
+
+<p>然后使用这个命令生成密钥文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># cd conf</span><br><span class="line"># htpasswd -c -d file_name &quot;$username&quot; #你的用户名</span><br></pre></td></tr></table></figure>
+
+<p>根据系统提示输入两次密码便完成了文件的生成。</p>
+<h3 id="使用PHP生成认证文件"><a href="#使用PHP生成认证文件" class="headerlink" title="使用PHP生成认证文件"></a>使用<code>PHP</code>生成认证文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; $password = crypt(&quot;password&quot;, base64_encode(&quot;password&quot;)); //第二个参数是盐值，随机两个字母即可</span><br><span class="line">&gt;&gt;&gt; file_put_contents(&quot;htpasswd&quot;, &quot;username:$password&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>完成以上步骤，便可在网站中使用 http 基本认证了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2017/10/11/Nginx%20%E5%BC%80%E5%90%AF%E5%9F%BA%E6%9C%AC%20http%20%E8%AE%A4%E8%AF%81/" data-id="cljcm06th002chev6h92ced28" data-title="Nginx 开启基本 http 认证" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-Git 中撤销已 push 的 commit" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2017/10/10/Git%20%E4%B8%AD%E6%92%A4%E9%94%80%E5%B7%B2%20push%20%E7%9A%84%20commit/" class="article-date">
+  <time class="dt-published" datetime="2017-10-10T02:37:00.000Z" itemprop="datePublished">2017-10-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2017/10/10/Git%20%E4%B8%AD%E6%92%A4%E9%94%80%E5%B7%B2%20push%20%E7%9A%84%20commit/">Git 中撤销已 push 的 commit</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>在使用 Git 时，push 到远端后发现 commit 了多余的文件，或者提交到了错误的分支，或者希望能够回退到以前的版本，这时就要撤销提交。</p>
+<h2 id="本地回退代码："><a href="#本地回退代码：" class="headerlink" title="本地回退代码："></a>本地回退代码：</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git reset --hard HEAD~1</span><br><span class="line">//git reset --soft HEAD~1</span><br></pre></td></tr></table></figure>
+
+<p><code>~1</code>代表回退一个版本，<code>--hard</code>会丢弃本地更改，<code>--soft</code>会保留本地更改，具体使用时应根据具体情况斟酌。</p>
+<h2 id="将撤销推送到远程服务器。"><a href="#将撤销推送到远程服务器。" class="headerlink" title="将撤销推送到远程服务器。"></a>将撤销推送到远程服务器。</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -f</span><br></pre></td></tr></table></figure>
+
+<p>直接使用<code>git push</code>会提示本地版本落后于远程版本，所以需要<code>-f</code>参数强制进行 push。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2017/10/10/Git%20%E4%B8%AD%E6%92%A4%E9%94%80%E5%B7%B2%20push%20%E7%9A%84%20commit/" data-id="cljcm06sk000lhev6h038bh8o" data-title="Git 中撤销已 push 的 commit" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/" rel="tag">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/page/5/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/7/">下一页 &raquo;</a>
+  </nav>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORS/" rel="tag">CORS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeetCode/" rel="tag">LeetCode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Plan/" rel="tag">Plan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%82%9F/" rel="tag">感悟</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" rel="tag">诗词赋</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AC%E8%BD%BD/" rel="tag">转载</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CORS/" style="font-size: 10px;">CORS</a> <a href="/tags/Docker/" style="font-size: 11px;">Docker</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/LeetCode/" style="font-size: 16px;">LeetCode</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/MySQL/" style="font-size: 18px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 12px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 11px;">PHP</a> <a href="/tags/Plan/" style="font-size: 10px;">Plan</a> <a href="/tags/Redis/" style="font-size: 12px;">Redis</a> <a href="/tags/%E6%84%9F%E6%82%9F/" style="font-size: 14px;">感悟</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">技术</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 13px;">服务器</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 10px;">算法</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" style="font-size: 17px;">诗词赋</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">五月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">十二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/01/13/%E4%BD%BF%E7%94%A8%20awk%20%E5%91%BD%E4%BB%A4%E7%AD%9B%E9%80%89%20csv%20%E6%8C%87%E5%AE%9A%E8%A1%8C/">使用 awk 命令筛选 csv 指定行</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/17/linux%20%E6%9B%BF%E6%8D%A2%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2/">linux 替换多行字符串</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/07/%E8%A5%BF%E5%9B%AD%E5%90%9F/">西园吟</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/22/%E5%B0%91%E5%B9%B4%E6%B8%B8/">少年游</a>
+          </li>
+        
+          <li>
+            <a href="/2022/02/10/%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%20tcpdump%20%E7%9A%84%E4%BD%BF%E7%94%A8/">网络抓包工具 tcpdump 的使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Chen Gangyang<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

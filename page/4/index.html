@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Castle，专属于自己的领地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Castle，专属于自己的领地">
+<meta property="og:url" content="https://www.gonever.com/page/4/">
+<meta property="og:site_name" content="Castle，专属于自己的领地">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="Chen Gangyang">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Castle，专属于自己的领地" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Castle，专属于自己的领地</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">我的沉思、笔记和回忆</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://www.gonever.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-MySQL 深入学习（一）：一条 SQL 查询语句执行的流程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/08/17/MySQL%20%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E4%B8%80%E6%9D%A1%20SQL%20%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E6%89%A7%E8%A1%8C%E7%9A%84%E6%B5%81%E7%A8%8B/" class="article-date">
+  <time class="dt-published" datetime="2019-08-17T03:52:38.000Z" itemprop="datePublished">2019-08-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2019/08/17/MySQL%20%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E4%B8%80%E6%9D%A1%20SQL%20%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E6%89%A7%E8%A1%8C%E7%9A%84%E6%B5%81%E7%A8%8B/">MySQL 深入学习（一）：一条 SQL 查询语句执行的流程</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="执行流程"><a href="#执行流程" class="headerlink" title="执行流程"></a>执行流程</h2><p><img src="https://static001.geekbang.org/resource/image/0d/d9/0d2070e8f84c4801adbfa03bda1f98d9.png" alt="图片"></p>
+<h2 id="连接器"><a href="#连接器" class="headerlink" title="连接器"></a>连接器</h2><ol>
+<li>建立连接，完成 tcp 握手</li>
+<li>完成权限验证，验证之后以后的所有的会话都基于建立会话时的权限，如果此时管理员修改了权限，已经建立的连接的权限不会修改</li>
+<li>关闭连接，如果客户端太长时间没有交互，连接器就会关闭连接，默认为 8 小时。（由 wait_timeout 参数控制）</li>
+<li>MySQL 临时使用的内存是管理在连接对象里边的，在关闭连接时自动释放。如果长时间使用一个连接不进行释放可能会引起内存持续增加。</li>
+</ol>
+<h2 id="查询缓存"><a href="#查询缓存" class="headerlink" title="查询缓存"></a>查询缓存</h2><p>查询缓存会将查询结果缓存下来，如果有相同的查询语句会直接返回已经缓存的结果。一旦表有更新就会删除查询缓存。</p>
+<p>建议不要用，MySQL 8 开始已经完全移除。</p>
+<h2 id="分析器"><a href="#分析器" class="headerlink" title="分析器"></a>分析器</h2><p>分析器会进行词法分析、语法分析，判断是否符合 MySQL 语法。如果发生错误，会返回“You have an error in your SQL sytanx”的错误提醒。</p>
+<h2 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h2><ol>
+<li>决定是否使用索引。</li>
+<li>决定关联表时的执行顺序。</li>
+</ol>
+<h2 id="执行器"><a href="#执行器" class="headerlink" title="执行器"></a>执行器</h2><p>调用具体的存储引擎获取执行结果。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2019/08/17/MySQL%20%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E4%B8%80%E6%9D%A1%20SQL%20%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E6%89%A7%E8%A1%8C%E7%9A%84%E6%B5%81%E7%A8%8B/" data-id="cljcm06td0022hev6h02zhjnv" data-title="MySQL 深入学习（一）：一条 SQL 查询语句执行的流程" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-诗意与生活：与自己和解" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/07/17/%E8%AF%97%E6%84%8F%E4%B8%8E%E7%94%9F%E6%B4%BB%EF%BC%9A%E4%B8%8E%E8%87%AA%E5%B7%B1%E5%92%8C%E8%A7%A3/" class="article-date">
+  <time class="dt-published" datetime="2019-07-17T03:51:58.000Z" itemprop="datePublished">2019-07-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2019/07/17/%E8%AF%97%E6%84%8F%E4%B8%8E%E7%94%9F%E6%B4%BB%EF%BC%9A%E4%B8%8E%E8%87%AA%E5%B7%B1%E5%92%8C%E8%A7%A3/">诗意与生活：与自己和解</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>年少的时候的那股昂扬向上的生命力，都随着高考的结束而埋葬。随之而来的，便是无止境的自由与恣意。与之相伴的，便是慵懒与散漫。我曾经积蓄了全部力量来获取自由，终于目的达到了，而生命也开始褪色。</p>
+<p>我曾经在自由的日子里走遍开封城的大街小巷，万岁山的吊桥、御河的流觞曲水、相国寺的晚钟、翰园的碑林字帖、曹门的市井小摊、梁园的吹台三友。站在繁塔的顶层，看着塔下倾颓的开封城，我享受着这自由，欣赏着和我一样没落了的开封城。却从来没想到过诗意中隐隐的侵蚀，让我更加没落。</p>
+<p>我常常思考，人生就算卑微如尘埃，如果身处其中的人能够乐在其中，也未免不是一件幸事。然而，尘世中的我们常常身不由己，多数的潇洒都要有足够的资本。那时自由的我如同风儿一样无拘无束，也如风儿一样了无痕迹。如此这般，大概之后也只能风餐露宿了。</p>
+<p>道家圣地延庆观的一缕香，唤醒了恍如隔世的我。我开始思考以后的人生轨迹。大概自由的日子要结束了，我要告别诗意，拥抱生活了。</p>
+<p>之后的日子虽然不是顺风顺水，却也称不得波澜壮阔。日子对我始终是宽容的，虽然我荒废了一段大好时光，仍然能够勉强学到一点糊口的本领。我在计算机大楼的实验室中一点点地学习编程，闲暇时欣赏雪垠湖碧绿的湖光、婀娜的垂柳。原来即使牺牲掉了自由，也可以悠然自得的生活，还能为明天的生活埋下希望。感谢我生命中的旅人，给了我莫大的帮助，失去的时光随着日子的继续流逝一点点追了回来。</p>
+<p>时光荏苒，黄山的旅途为大学生活划上了句号。</p>
+<p>上海，这座魔幻的城市倒也对我还算不错。很容易找到一份还可以的工作，同那些满怀激情的小伙伴们一起启程，将知识化为代码，将代码化为软件。一天天的工作正是我当下的价值。我曾经的那些诗词歌赋能让我悠然自得抑或心潮澎湃，却不能让我在这城市的屋檐下有容身之所。枕上书越来越多，却都是技术书籍。诸如数据库、算法之类的书让我工作中能够得心应手，至于《诗经》、《乐府诗》之类的，却是已然蒙灰了。</p>
+<p>于是在这城市的夜里，我时常感到孤独。父亲曾告诉我，不要像蚂蚁一样生活。而如今的我，不正是如此。茫茫人海中，我们本难寻找生命的意义；而如今，我竟连思考生命意义的时间都没有了，只是一日日的工作，一日日的变老。</p>
+<p>于是生命又要再次改变，诗意又要稍许回头。这喧嚣的尘世中我们必须立足，却似乎也应该有时间去思考生命的真谛，去品味人生的酸甜苦辣。尽力做好工作是自己的价值，诗意地生活是自己的追求。我曾经告别诗意，如今又想重新拥抱诗意；曾经努力去谋生，如今又厌恶这样生活中只有工作。</p>
+<p>于是，我选择与自己和解。</p>
+<p>花也一半，柴也一半。<br>酒也一半，盐也一半。<br>诗也一半，杂也一半。</p>
+<p>这便是以后的箴言了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2019/07/17/%E8%AF%97%E6%84%8F%E4%B8%8E%E7%94%9F%E6%B4%BB%EF%BC%9A%E4%B8%8E%E8%87%AA%E5%B7%B1%E5%92%8C%E8%A7%A3/" data-id="cljcm06v3006ehev62g89hn7q" data-title="诗意与生活：与自己和解" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%84%9F%E6%82%9F/" rel="tag">感悟</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-记一次解决线上 Redis 集群单节点 CPU 偏高问题" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/07/04/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%A7%A3%E5%86%B3%E7%BA%BF%E4%B8%8A%20Redis%20%E9%9B%86%E7%BE%A4%E5%8D%95%E8%8A%82%E7%82%B9%20CPU%20%E5%81%8F%E9%AB%98%E9%97%AE%E9%A2%98/" class="article-date">
+  <time class="dt-published" datetime="2019-07-04T09:52:57.000Z" itemprop="datePublished">2019-07-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2019/07/04/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%A7%A3%E5%86%B3%E7%BA%BF%E4%B8%8A%20Redis%20%E9%9B%86%E7%BE%A4%E5%8D%95%E8%8A%82%E7%82%B9%20CPU%20%E5%81%8F%E9%AB%98%E9%97%AE%E9%A2%98/">记一次解决线上 Redis 集群单节点 CPU 偏高问题</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>线上已经运行很久的一个 Redis （阿里云64节点集群版）经常会报 CPU 偏高，经确认后发现只有 13 节点 CPU 偏高，且是其他节点的 3 倍以上，即大部分节点的 CPU 占用率在 20% 到 30%，QPS 大约是 7000，问题节点的 CPU 占用率超过 80%，QPS 是 27000。</p>
+<h2 id="排查问题"><a href="#排查问题" class="headerlink" title="排查问题"></a>排查问题</h2><h3 id="初次定位"><a href="#初次定位" class="headerlink" title="初次定位"></a>初次定位</h3><p>我们首先怀疑是大 key 问题引起的，于是使用 monitor 命令在业务低峰时进行了 monitor，发现某个 类型为 hash 的 key 拆分了100片，每个 hash 的长度大约是 30 万。我们观察了这 100 个 key，在每个节点分布的比较均匀，不应该引起如此严重的偏移问题。</p>
+<p>所以结论是该节点的 CPU 偏高不是由于大 key 问题引起的。</p>
+<h3 id="再次排查"><a href="#再次排查" class="headerlink" title="再次排查"></a>再次排查</h3><p>通过阿里云的 imonitor 命令，我对指定的节点进行了监听，并将结果保存为文本文件进行分析。</p>
+<p>用 telnet 命令连接到阿里云的 Redis Server Cluster，在 telnet 中执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">imonitor 13</span><br></pre></td></tr></table></figure>
+
+<p>将结果保存为 <code>redis-13.txt</code>。</p>
+<p>对结果进行分析</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat redis-13.txt | grep -o -E &quot;1561806\d+&quot; | sort | uniq -c</span><br></pre></td></tr></table></figure>
+
+<p>结果为</p>
+<p><img src="/upload/phpaAIZhO5d1dcef55d538.png" alt="image.png"></p>
+<p>可以看出该节点的 QPS 大概为 7000 多，远不及监控上的 27000。</p>
+<p><strong>因此，我们确定是阿里云的监控上对应的节点和 imonitor 的节点不对应。</strong></p>
+<p>发现这个问题后，我们尝试用 iinfo 命令找出来 CPU 比较高的节点。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#遍历每个节点</span><br><span class="line">for i in &#123;0..63&#125;</span><br><span class="line">do</span><br><span class="line">redis-cli -h $host -a iinfo $i CPU</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<p>通过该方法找到 5 节点的 CPU 显著高于其他节点。</p>
+<p>再次使用 imonitor 命令获取该节点的 QPS:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat redis-5.txt | grep -o -E &quot;1561807\d+&quot; | sort | uniq -c</span><br></pre></td></tr></table></figure>
+
+<p><img src="/upload/phpQSsnaP5d1ddab5be176.png" alt="image.png"></p>
+<p>QPS 为 28000 左右，符合监控曲线。</p>
+<p>然后我们通过使用 <a target="_blank" rel="noopener" href="https://github.com/facebookarchive/redis-faina">redis-faina</a> 分析 Monitor 的结果。<br>首先要对结果进行处理，将 imonitor 接收到的每行开头的 “+” 号去掉，执行命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i &quot;&quot; &quot;s/+//g&quot; redis-5.txt </span><br></pre></td></tr></table></figure>
+
+<p>然后使用 redis-faina 分析结果，执行命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python redis-faina.py redis-5.txt </span><br></pre></td></tr></table></figure>
+
+<p>得出来访问量较高的命令，发现有一个 <code>hget</code> 命令的 key 和 field 明显写反了，且 QPS 很高，正是这个 key 导致了 CPU 和 miss 曲线的升高。</p>
+<p>我们在代码库中查找出问题的 key，逐行排查，发现在一个项目中确实存在 key field 写反的情况，于是通知了开发者进行修改。</p>
+<p>第二天开发者修改了代码并进行了发布之后，曾经偏高的 CPU 节点稳定如他，问题终于算得到了解决。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><ol>
+<li><p>imonitor 命令和阿里云后台的监控的节点不一致，导致问题迟迟未被发现（阿里云反馈仅在早期的 Redis 集群中有该现象，新版的 Redis 集群都是对应的）。</p>
+</li>
+<li><p>使用 imonitor 和 redis-faina 一起，可以方便地排查 redis 大 key 和热 key。</p>
+</li>
+<li><p>具体问题要具体分析，不能解决问题的时候要变通思路，通过各种方法去尝试解决问题。</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2019/07/04/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%A7%A3%E5%86%B3%E7%BA%BF%E4%B8%8A%20Redis%20%E9%9B%86%E7%BE%A4%E5%8D%95%E8%8A%82%E7%82%B9%20CPU%20%E5%81%8F%E9%AB%98%E9%97%AE%E9%A2%98/" data-id="cljcm06v10069hev6giyh5lvi" data-title="记一次解决线上 Redis 集群单节点 CPU 偏高问题" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-记一次线上查找和删除 Redis 大 key" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/04/25/%E8%AE%B0%E4%B8%80%E6%AC%A1%E7%BA%BF%E4%B8%8A%E6%9F%A5%E6%89%BE%E5%92%8C%E5%88%A0%E9%99%A4%20Redis%20%E5%A4%A7%20key/" class="article-date">
+  <time class="dt-published" datetime="2019-04-24T23:55:56.000Z" itemprop="datePublished">2019-04-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2019/04/25/%E8%AE%B0%E4%B8%80%E6%AC%A1%E7%BA%BF%E4%B8%8A%E6%9F%A5%E6%89%BE%E5%92%8C%E5%88%A0%E9%99%A4%20Redis%20%E5%A4%A7%20key/">记一次线上查找和删除 Redis 大 key</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>昨天凌晨，因为占用容量峰值为 218 G，DBA 将 Redis 的容量由 500G 调低到了 320G。在调低容量后，Redis 开始频繁报 <code>HighMemoryUsage</code> 的警告。而查看 Redis 集群的监控后发现，总容量用掉的比例不足 60%，不应该频繁报警，因此开始了排查之路。</p>
+<h2 id="排查原因"><a href="#排查原因" class="headerlink" title="排查原因"></a>排查原因</h2><p>首先，我们已经排除了是总容量大小的问题。</p>
+<p>由于我们的 Redis 是阿里云的集群版，有多个节点，因此我查看了各个节点的大小。果然，最大的节点已经超过 90%，而小的节点的占用则在 30% 左右。这说明 Redis 发生了非常严重的倾斜。</p>
+<p>我们现有的程序已经充分考虑到了 Redis 集群的特性，<code>key</code> 设计策略没有问题，不应该出现如此大的倾斜，所以问题在其他方面。</p>
+<p>我们用阿里云的 python 脚本来查询 Redis 大 key，果真发现有一些很老的废弃的大 key，key 为 hash 类型，每个的长度在 500 万以上，最长的接近 1000 万。因此，倾斜的原因是这些大 key 的存在，且这些大 key 在不同节点分布不均匀。</p>
+<h3 id="找出大-key"><a href="#找出大-key" class="headerlink" title="找出大 key"></a>找出大 key</h3><p>由于阿里云的 python 脚本非常慢，因此我写了一个 golang 的脚本来查找大 key。</p>
+<p>因为阿里云集群版 Redis 做了一些改造，因此需要使用 <code>iscan</code> 命令（<a target="_blank" rel="noopener" href="https://www.alibabacloud.com/help/zh/doc-detail/26356.htm">阿里云Redis命令列表</a>）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">for i := 0; i &lt; 32; i++ &#123;</span><br><span class="line">    fmt.Printf(&quot;node %d start\n&quot;, i)</span><br><span class="line">    var cursor int</span><br><span class="line">    for &#123;</span><br><span class="line">        values, err := redis.Values(r.Do(&quot;ISCAN&quot;, i, cursor, &quot;COUNT&quot;, 500, &quot;MATCH&quot;, &quot;rc:2019*&quot;))</span><br><span class="line">        if err != nil &#123;</span><br><span class="line">            fmt.Println(err)</span><br><span class="line">            return</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        cursor, err = redis.Int(values[0], nil)</span><br><span class="line">        //fmt.Println(cursor)</span><br><span class="line">        if err != nil &#123;</span><br><span class="line">            fmt.Println(err)</span><br><span class="line">            return</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        items, err := redis.Strings(values[1], nil)</span><br><span class="line">        if err != nil &#123;</span><br><span class="line">            fmt.Println(err)</span><br><span class="line">            return</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        for i := range items &#123;</span><br><span class="line">            t, err := redis.String(r.Do(&quot;TYPE&quot;, items[i]))</span><br><span class="line">            if err != nil &#123;</span><br><span class="line">                fmt.Println(t)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            var l int</span><br><span class="line"></span><br><span class="line">            switch t &#123;</span><br><span class="line">            case &quot;string&quot;:</span><br><span class="line">                l, _ = redis.Int(r.Do(&quot;STRLEN&quot;, items[i]))</span><br><span class="line">            case &quot;hash&quot;:</span><br><span class="line">                l, _ = redis.Int(r.Do(&quot;HLEN&quot;, items[i]))</span><br><span class="line">            case &quot;set&quot;:</span><br><span class="line">                l, _ = redis.Int(r.Do(&quot;SCARD&quot;, items[i]))</span><br><span class="line">            case &quot;zset&quot;:</span><br><span class="line">                l, _ = redis.Int(r.Do(&quot;ZCARD&quot;, items[i]))</span><br><span class="line">            case &quot;list&quot;:</span><br><span class="line">                l, _ = redis.Int(r.Do(&quot;LLEN&quot;, items[i]))</span><br><span class="line">            &#125;</span><br><span class="line">            fmt.Printf(&quot;key: %s, length: %d\n&quot;, items[i], l)</span><br><span class="line">            if l &gt; bigKeyLen &#123;</span><br><span class="line">                fmt.Printf(&quot;find big key: %s, len: %d\n&quot;, items[i], l)</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                err := r.Send(&quot;DEL&quot;, items[i])</span><br><span class="line">                if err != nil &#123;</span><br><span class="line">                    fmt.Println(err)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        err = r.Flush()</span><br><span class="line">        if err != nil &#123;</span><br><span class="line">            fmt.Println(err)</span><br><span class="line">        &#125;</span><br><span class="line">        if cursor == 0 &#123;</span><br><span class="line">            fmt.Printf(&quot;node %d end\n&quot;, i)</span><br><span class="line">            break</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这里，如果发现了应该删除的小 key ，我们直接删掉，并将大 key 找了出来。</p>
+<h2 id="删除大-key"><a href="#删除大-key" class="headerlink" title="删除大 key"></a>删除大 key</h2><p>因为 Redis 的特性，删除大 key 可能会导致线程阻塞，其他请求无法接收造成应用闪崩。因此我需要将大 key 的元素逐步清空，再移除这个 key（在 Redis 4.0 以上版本中，可以直接使用 unlink 命令另外启动一个线程来删除大 key）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">for &#123;</span><br><span class="line">    values, err := redis.Values(r.Do(&quot;HSCAN&quot;, bigKey, cursor, &quot;COUNT&quot;, 100))</span><br><span class="line">    if err != nil &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">        return</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cursor, err = redis.Int64(values[0], nil)</span><br><span class="line">    if err != nil &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">        return</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    items, err = redis.Int64Map(values[1], nil)</span><br><span class="line">    if err != nil &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">        return</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    for key := range items &#123;</span><br><span class="line">        err := r.Send(&quot;HDEL&quot;, bigKey, key)</span><br><span class="line">        if err != nil &#123;</span><br><span class="line">            fmt.Println(err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    err = r.Flush()</span><br><span class="line">    if err != nil &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if cursor == 0 &#123;</span><br><span class="line">        break</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">_, err = redis.Do(&quot;DEL&quot;, bigKey)</span><br><span class="line"></span><br><span class="line">if err != nil &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样便完成了大 key 的删除。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在确定 Redis 分布不均匀后，我们要首先检查是否是有大 key，如果有的话要逐步清除，不能影响业务。之后需要选择合适的方案设计 Redis key，使其均匀的分布在各个节点。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2019/04/25/%E8%AE%B0%E4%B8%80%E6%AC%A1%E7%BA%BF%E4%B8%8A%E6%9F%A5%E6%89%BE%E5%92%8C%E5%88%A0%E9%99%A4%20Redis%20%E5%A4%A7%20key/" data-id="cljcm06v00067hev6fc4agho9" data-title="记一次线上查找和删除 Redis 大 key" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-du 命令的使用方法" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/04/22/du%20%E5%91%BD%E4%BB%A4%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" class="article-date">
+  <time class="dt-published" datetime="2019-04-22T12:59:52.000Z" itemprop="datePublished">2019-04-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2019/04/22/du%20%E5%91%BD%E4%BB%A4%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/">du 命令的使用方法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>我们经常需要在 linux 和 unix 上使用 <code>du</code> 命令来查看文件和文件夹的大小，在这里，我列举一下常用的一些用法。</p>
+<h2 id="基本命令参数"><a href="#基本命令参数" class="headerlink" title="基本命令参数"></a><a href="#%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E5%8F%82%E6%95%B0">基本命令参数</a></h2><p>-h 以人类可读的方式显示（比如 K, M 和 G）</p>
+<p>-g 以 Gb 为单位显示</p>
+<p>-m 以 Mb 为单位显示</p>
+<p>-k 以 Kb 为单位显示</p>
+<p>-d depth 显示指定层级数</p>
+<p>-s 只显示一条（相当于 -d 0）</p>
+<h2 id="常用的命令"><a href="#常用的命令" class="headerlink" title="常用的命令"></a><a href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4">常用的命令</a></h2><h3 id="查看文件夹的总大小"><a href="#查看文件夹的总大小" class="headerlink" title="查看文件夹的总大小"></a><a href="#%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E5%A4%B9%E7%9A%84%E6%80%BB%E5%A4%A7%E5%B0%8F">查看文件夹的总大小</a></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">du -sh</span><br></pre></td></tr></table></figure>
+
+<p><img src="/upload/phpblHHHM5cbdb9ec69547.png" alt="image.png"></p>
+<h3 id="查看当前目录下所有文件（夹）的大小"><a href="#查看当前目录下所有文件（夹）的大小" class="headerlink" title="查看当前目录下所有文件（夹）的大小"></a><a href="#%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E7%9B%AE%E5%BD%95%E4%B8%8B%E6%89%80%E6%9C%89%E6%96%87%E4%BB%B6%EF%BC%88%E5%A4%B9%EF%BC%89%E7%9A%84%E5%A4%A7%E5%B0%8F">查看当前目录下所有文件（夹）的大小</a></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">du -sh *</span><br></pre></td></tr></table></figure>
+
+<p><img src="/upload/phpFeJvjm5cbdbacf86e2b.png" alt="image.png"></p>
+<p>或者</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">du -hd 1</span><br></pre></td></tr></table></figure>
+
+<p><img src="/upload/phplcYzez5cbdbb03e6631.png" alt="image.png"></p>
+<p>这两个命令有些小小的区别，大家可以自己体会。</p>
+<h3 id="显示当前目录文件的大小并排序"><a href="#显示当前目录文件的大小并排序" class="headerlink" title="显示当前目录文件的大小并排序"></a><a href="#%E6%98%BE%E7%A4%BA%E5%BD%93%E5%89%8D%E7%9B%AE%E5%BD%95%E6%96%87%E4%BB%B6%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%B9%B6%E6%8E%92%E5%BA%8F">显示当前目录文件的大小并排序</a></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">du -sk * | sort -rn  #以 Kb 为单位</span><br><span class="line">du -sm * | sort -rn #以 Mb 为单位</span><br><span class="line">du -sg * | sort -rn  #以 Gb 为单位</span><br></pre></td></tr></table></figure>
+
+<p><img src="/upload/phpNxqvmQ5cbdbbb085b71.png" alt="image.png"></p>
+<h3 id="显示多层目录的文件（夹）的大小"><a href="#显示多层目录的文件（夹）的大小" class="headerlink" title="显示多层目录的文件（夹）的大小"></a><a href="#%E6%98%BE%E7%A4%BA%E5%A4%9A%E5%B1%82%E7%9B%AE%E5%BD%95%E7%9A%84%E6%96%87%E4%BB%B6%EF%BC%88%E5%A4%B9%EF%BC%89%E7%9A%84%E5%A4%A7%E5%B0%8F">显示多层目录的文件（夹）的大小</a></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">du -hd 3 //数字表示层级</span><br></pre></td></tr></table></figure>
+
+<p><img src="/upload/phptfpQ4q5cbdbcdb3ea16.png" alt="image.png"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2019/04/22/du%20%E5%91%BD%E4%BB%A4%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" data-id="cljcm06tu003dhev61p36cwar" data-title="du 命令的使用方法" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-记一次线上 Kafka 问题排查" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/04/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E7%BA%BF%E4%B8%8A%20Kafka%20%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" class="article-date">
+  <time class="dt-published" datetime="2019-04-19T03:27:23.000Z" itemprop="datePublished">2019-04-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2019/04/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E7%BA%BF%E4%B8%8A%20Kafka%20%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/">记一次线上 Kafka 问题排查</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>线上一组 kafka 消费者在运行了很多天之后突然积压，日志显示该 kafka 消费者频繁 rebalance 并且大概率返回失败。</p>
+<p>错误消息如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kafka server: The provided member is not known in the current generation</span><br><span class="line"></span><br><span class="line">Request was for a topic or partition that does not exist on this broker</span><br></pre></td></tr></table></figure>
+
+<p>有时候日志里还会伴随着</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">i/o timeout</span><br></pre></td></tr></table></figure>
+
+<p>我们添加了 errors 和 notifications 日志，发现每次错误都伴随着 rebalance。</p>
+<p>我们首先认为是超时时间过短导致的，于是我们调大了连接超时和读写超时，但是问题没有得到解决。</p>
+<p>我们又认为是我们处理信息的时间过长，导致 kafka server 认为 client 死掉了，然后进行 rebalance 导致的。于是我们将每条获取到的 message 放到 channel 中，由多个消费者去消费 channel 来解决问题，但是问题仍然没有解决。我们阅读了 sarama 的 heartbeat 机制，发现每个 consumer 都有单独的 goroutine 每 3 秒发送一次心跳。因此这个处理时间应该只会导致消费速度下降，不会导致 rebalance。</p>
+<p>我们于是只好另外启动了一个消费者，指定了另外一个 group id，在消费过程中，我们看到并未发生 rebalance。这时我们更加一头雾水了。</p>
+<p>直到我们看到了这篇文章 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/dongxiao-yang/p/5417956.html">kafka consumer 频繁 reblance</a>，这篇文章提到：</p>
+<blockquote>
+<p>kafka 不同 topic 的 consumer 如果用的 group id 名字一样的情况下，其中任意一个 topic 的 consumer 重新上下线都会造成剩余所有的 consumer 产生 reblance 行为。</p>
+</blockquote>
+<p>而我们正是不同的 topic 下有名字相同的 group id 的多个消费者。为了验证确实是由这个问题导致的，我们暂停了该 group id 下其他消费者的消费，之前频繁 rebalance 的消费者果真再也没有发生过 rebalance。</p>
+<p>于是我们更改了这些消费者的 group id，以不同后缀进行区分，问题便解决了。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>由于 zookeeper 的特性，相同 group id 的不同 topic，只要有一个发生了 rebalance，都会广播给所有 topic，导致其他 topic 也发生 rebalance。在最坏情况下可能导致每个消费者都夯住。因此我们要注意用不同的 group id 来消费 kafka。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2019/04/19/%E8%AE%B0%E4%B8%80%E6%AC%A1%E7%BA%BF%E4%B8%8A%20Kafka%20%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" data-id="cljcm06uz0064hev681ts6yii" data-title="记一次线上 Kafka 问题排查" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-go mod 的使用" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/02/25/go%20mod%20%E7%9A%84%E4%BD%BF%E7%94%A8/" class="article-date">
+  <time class="dt-published" datetime="2019-02-25T08:04:34.000Z" itemprop="datePublished">2019-02-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2019/02/25/go%20mod%20%E7%9A%84%E4%BD%BF%E7%94%A8/">go mod 的使用</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>从 go1.11 开始，go 引入了 go mod 模块。在 $GOPATH 目录下，默认 go mod 是不启用的，需要手动执行 <code>GO111MODULE=on</code>来进行开启。</p>
+<h2 id="新项目中-go-mod-的使用"><a href="#新项目中-go-mod-的使用" class="headerlink" title="新项目中 go mod 的使用"></a>新项目中 go mod 的使用</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">//初始化 go mod</span><br><span class="line">go mod init $package_name</span><br><span class="line">//获取包</span><br><span class="line">go get $package_name@$version</span><br><span class="line">//下载依赖，会将依赖下载到 $GOPATH/pkg/mod</span><br><span class="line">go mod download ./...</span><br><span class="line">//将依赖下载到 vendor 包</span><br><span class="line">go mod vendor</span><br><span class="line">//添加引用但是还没下载的 mod</span><br><span class="line">go mod tidy</span><br><span class="line">//更新包版本</span><br><span class="line">go get -u</span><br></pre></td></tr></table></figure>
+
+<h2 id="旧项目中-go-mod-的使用"><a href="#旧项目中-go-mod-的使用" class="headerlink" title="旧项目中 go mod 的使用"></a>旧项目中 go mod 的使用</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export GO111MODULE=on </span><br><span class="line">//初始化 go mod</span><br><span class="line">go mod init $package_name</span><br><span class="line">go mod tidy</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2019/02/25/go%20mod%20%E7%9A%84%E4%BD%BF%E7%94%A8/" data-id="cljcm06tv003ghev680hx8ga5" data-title="go mod 的使用" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-govendor 的使用" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/01/28/govendor%20%E7%9A%84%E4%BD%BF%E7%94%A8/" class="article-date">
+  <time class="dt-published" datetime="2019-01-28T05:26:02.000Z" itemprop="datePublished">2019-01-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2019/01/28/govendor%20%E7%9A%84%E4%BD%BF%E7%94%A8/">govendor 的使用</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>在 go1.5 之前，go 使用第三方包时需要通过 <code>go get</code> 命令。使用 <code>go get</code> 命令获取的包都会存在于 GOSRC 中，这样的话团队之间控制第三方包会产生很多问题。在 go1.5 之后，go 会优先检测 vendor 目录下的包，之后会检测 GOSRC，这样总是会产生一些问题，比如包名不同，或者是依赖补全。合理使用 govendor 可以解决这个问题。</p>
+<p>获取指定的包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor fetch package</span><br></pre></td></tr></table></figure>
+
+<p>列出项目所有的包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">govendor list</span><br><span class="line">m missing   本地缺失</span><br><span class="line">l   local  在当前 vendor 中</span><br><span class="line">p  program </span><br><span class="line">u  unused</span><br><span class="line">e  external</span><br></pre></td></tr></table></figure>
+
+<p>获取包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">govendor fetch +a #所有</span><br><span class="line">govendor fetch +m//缺失</span><br></pre></td></tr></table></figure>
+
+<p>删除未使用的包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor remove +u</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2019/01/28/govendor%20%E7%9A%84%E4%BD%BF%E7%94%A8/" data-id="cljcm06tw003ihev623e2h65p" data-title="govendor 的使用" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-xargs 的一个小例子: 使用 xargs 来批量重命名" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/11/27/xargs%20%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E4%BE%8B%E5%AD%90:%20%E4%BD%BF%E7%94%A8%20xargs%20%E6%9D%A5%E6%89%B9%E9%87%8F%E9%87%8D%E5%91%BD%E5%90%8D/" class="article-date">
+  <time class="dt-published" datetime="2018-11-27T14:49:21.000Z" itemprop="datePublished">2018-11-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/11/27/xargs%20%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E4%BE%8B%E5%AD%90:%20%E4%BD%BF%E7%94%A8%20xargs%20%E6%9D%A5%E6%89%B9%E9%87%8F%E9%87%8D%E5%91%BD%E5%90%8D/">xargs 的一个小例子: 使用 xargs 来批量重命名</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>使用 <code>xargs -I &#123;&#125;</code> 来用 <code>&#123;&#125;</code> 替代输入字符</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ ll 1.* | awk &#x27;&#123;print $9&#125;&#x27;</span><br><span class="line">1.1.c</span><br><span class="line">1.2.c</span><br><span class="line">1.3.c</span><br><span class="line">1.4.c</span><br><span class="line">1.4.h</span><br><span class="line">1.5.c</span><br><span class="line">1.6.c</span><br><span class="line">1.7.c</span><br><span class="line">1.8.c</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ll 1.* | awk &#x27;&#123;print $9&#125;&#x27; | cut -c 3- | xargs -I &#123;&#125; mv 1.&#123;&#125; 2.&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用该命令来将所有<code>1.</code>开头的文件重命名为<code>2.</code>开头。</p>
+<p>运行结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ ll 1.* | awk &#x27;&#123;print $9&#125;&#x27;</span><br><span class="line">2.1.c</span><br><span class="line">2.2.c</span><br><span class="line">2.3.c</span><br><span class="line">2.4.c</span><br><span class="line">2.4.h</span><br><span class="line">2.5.c</span><br><span class="line">2.6.c</span><br><span class="line">2.7.c</span><br><span class="line">2.8.c</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/11/27/xargs%20%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E4%BE%8B%E5%AD%90:%20%E4%BD%BF%E7%94%A8%20xargs%20%E6%9D%A5%E6%89%B9%E9%87%8F%E9%87%8D%E5%91%BD%E5%90%8D/" data-id="cljcm22f5000ctiv66uoa7o5q" data-title="xargs 的一个小例子: 使用 xargs 来批量重命名" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-MySQL 开启慢查询日志" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/08/24/MySQL%20%E5%BC%80%E5%90%AF%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/" class="article-date">
+  <time class="dt-published" datetime="2018-08-24T08:55:11.000Z" itemprop="datePublished">2018-08-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/08/24/MySQL%20%E5%BC%80%E5%90%AF%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/">MySQL 开启慢查询日志</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>MySQL 直接通过命令即可开启慢查询日志。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SET GLOBAL slow_query_log = ON;</span><br><span class="line">SET GLOBAL long_query_time = 2;</span><br></pre></td></tr></table></figure>
+
+<p>通过上面两句命令便可以开启慢查询了。</p>
+<p>通过 <code>slow_log</code> 表可以获取慢查询的具体情况:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from mysql.slow_log order by start_time desc;</span><br></pre></td></tr></table></figure>
+
+<p><code>slow_log</code> 的表结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `slow_log` (</span><br><span class="line">  `start_time` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),</span><br><span class="line">  `user_host` mediumtext NOT NULL,</span><br><span class="line">  `query_time` time(6) NOT NULL,</span><br><span class="line">  `lock_time` time(6) NOT NULL,</span><br><span class="line">  `rows_sent` int(11) NOT NULL,</span><br><span class="line">  `rows_examined` int(11) NOT NULL,</span><br><span class="line">  `db` varchar(512) NOT NULL,</span><br><span class="line">  `last_insert_id` int(11) NOT NULL,</span><br><span class="line">  `insert_id` int(11) NOT NULL,</span><br><span class="line">  `server_id` int(10) unsigned NOT NULL,</span><br><span class="line">  `sql_text` mediumblob NOT NULL,</span><br><span class="line">  `thread_id` bigint(21) unsigned NOT NULL</span><br><span class="line">) ENGINE=CSV DEFAULT CHARSET=utf8 COMMENT=&#x27;Slow log&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>查看 <code>slow_log</code> 相关配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like &#x27;slow_query_log%&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>结果是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+---------------------+--------------------------------------+</span><br><span class="line">| Variable_name       | Value                                |</span><br><span class="line">+---------------------+--------------------------------------+</span><br><span class="line">| slow_query_log      | ON                                   |</span><br><span class="line">| slow_query_log_file | /var/lib/mysql/hostname-slow.log     |</span><br><span class="line">+---------------------+--------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>然后我们也可以从 <code>slow_query_log_file</code> 读取和分析慢查询的具体情况</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/08/24/MySQL%20%E5%BC%80%E5%90%AF%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/" data-id="cljcm06tc001zhev67dx49iou" data-title="MySQL 开启慢查询日志" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/page/3/">&laquo; 上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/5/">下一页 &raquo;</a>
+  </nav>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORS/" rel="tag">CORS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeetCode/" rel="tag">LeetCode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Plan/" rel="tag">Plan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%82%9F/" rel="tag">感悟</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" rel="tag">诗词赋</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AC%E8%BD%BD/" rel="tag">转载</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CORS/" style="font-size: 10px;">CORS</a> <a href="/tags/Docker/" style="font-size: 11px;">Docker</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/LeetCode/" style="font-size: 16px;">LeetCode</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/MySQL/" style="font-size: 18px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 12px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 11px;">PHP</a> <a href="/tags/Plan/" style="font-size: 10px;">Plan</a> <a href="/tags/Redis/" style="font-size: 12px;">Redis</a> <a href="/tags/%E6%84%9F%E6%82%9F/" style="font-size: 14px;">感悟</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">技术</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 13px;">服务器</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 10px;">算法</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" style="font-size: 17px;">诗词赋</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">五月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">十二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/01/13/%E4%BD%BF%E7%94%A8%20awk%20%E5%91%BD%E4%BB%A4%E7%AD%9B%E9%80%89%20csv%20%E6%8C%87%E5%AE%9A%E8%A1%8C/">使用 awk 命令筛选 csv 指定行</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/17/linux%20%E6%9B%BF%E6%8D%A2%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2/">linux 替换多行字符串</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/07/%E8%A5%BF%E5%9B%AD%E5%90%9F/">西园吟</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/22/%E5%B0%91%E5%B9%B4%E6%B8%B8/">少年游</a>
+          </li>
+        
+          <li>
+            <a href="/2022/02/10/%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%20tcpdump%20%E7%9A%84%E4%BD%BF%E7%94%A8/">网络抓包工具 tcpdump 的使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Chen Gangyang<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

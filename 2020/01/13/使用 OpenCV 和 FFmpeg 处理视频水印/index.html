@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>使用 OpenCV 和 FFmpeg 处理视频水印 | Castle，专属于自己的领地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="OpenCV 是一个跨平台的计算机视觉库，提供了很多图像处理能力。 FFmpeg 则是一个强大的视频处理工具，很多视频软件的基础功能都依赖于他。 我们可以用 OpenCV 和 FFmpeg 组合起来，来去除视频中的水印。 我们旨在解决不同视频中水印大小和位置会变化，但是水印样式一致的视频。另外，单个视频中的水印大小和位置会变化的视频不适合本方案。 从视频中截取首帧截图1ffmpeg -i exam">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 OpenCV 和 FFmpeg 处理视频水印">
+<meta property="og:url" content="https://www.gonever.com/2020/01/13/%E4%BD%BF%E7%94%A8%20OpenCV%20%E5%92%8C%20FFmpeg%20%E5%A4%84%E7%90%86%E8%A7%86%E9%A2%91%E6%B0%B4%E5%8D%B0/">
+<meta property="og:site_name" content="Castle，专属于自己的领地">
+<meta property="og:description" content="OpenCV 是一个跨平台的计算机视觉库，提供了很多图像处理能力。 FFmpeg 则是一个强大的视频处理工具，很多视频软件的基础功能都依赖于他。 我们可以用 OpenCV 和 FFmpeg 组合起来，来去除视频中的水印。 我们旨在解决不同视频中水印大小和位置会变化，但是水印样式一致的视频。另外，单个视频中的水印大小和位置会变化的视频不适合本方案。 从视频中截取首帧截图1ffmpeg -i exam">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://oss.gonever.com/phpNxP71p5e1fd45295aa0.png">
+<meta property="og:image" content="https://oss.gonever.com/phppn6y355e1fce1594e11.png">
+<meta property="og:image" content="https://oss.gonever.com/phpbJXidR5e1fd48c6e97f.png">
+<meta property="og:image" content="https://oss.gonever.com/php9cM6Xp5e1fd52814376.png">
+<meta property="og:image" content="https://oss.gonever.com/phpBRRu0c5e1fd890c9bfa.png">
+<meta property="article:published_time" content="2020-01-13T10:01:03.000Z">
+<meta property="article:modified_time" content="2023-03-15T23:26:34.000Z">
+<meta property="article:author" content="Chen Gangyang">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://oss.gonever.com/phpNxP71p5e1fd45295aa0.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Castle，专属于自己的领地" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Castle，专属于自己的领地</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">我的沉思、笔记和回忆</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://www.gonever.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-使用 OpenCV 和 FFmpeg 处理视频水印" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/01/13/%E4%BD%BF%E7%94%A8%20OpenCV%20%E5%92%8C%20FFmpeg%20%E5%A4%84%E7%90%86%E8%A7%86%E9%A2%91%E6%B0%B4%E5%8D%B0/" class="article-date">
+  <time class="dt-published" datetime="2020-01-13T10:01:03.000Z" itemprop="datePublished">2020-01-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      使用 OpenCV 和 FFmpeg 处理视频水印
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>OpenCV 是一个跨平台的计算机视觉库，提供了很多图像处理能力。</p>
+<p>FFmpeg 则是一个强大的视频处理工具，很多视频软件的基础功能都依赖于他。</p>
+<p>我们可以用 OpenCV 和 FFmpeg 组合起来，来去除视频中的水印。</p>
+<p>我们旨在解决不同视频中水印大小和位置会变化，但是水印样式一致的视频。另外，单个视频中的水印大小和位置会变化的视频不适合本方案。</p>
+<h2 id="从视频中截取首帧截图"><a href="#从视频中截取首帧截图" class="headerlink" title="从视频中截取首帧截图"></a>从视频中截取首帧截图</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i example.mp4  -y -f image2  -ss 0 -vframes frame1.jpg</span><br></pre></td></tr></table></figure>
+
+<h2 id="处理首帧截图拿到水印"><a href="#处理首帧截图拿到水印" class="headerlink" title="处理首帧截图拿到水印"></a>处理首帧截图拿到水印</h2><p>这一步需要让你们的 UI 使用 PhotoShop 操作，获取水印并将水印外的部分中透明处理。水印图片应该为 PNG 格式。</p>
+<p><img src="https://oss.gonever.com/phpNxP71p5e1fd45295aa0.png" alt="image.png"><br><em>水印</em></p>
+<h2 id="匹配水印"><a href="#匹配水印" class="headerlink" title="匹配水印"></a>匹配水印</h2><p>匹配水印需要使用 OpenCV 库，本来我是准备用 Golang 的OpenCV 库 gocv.io&#x2F;x&#x2F;gocv 来完成操作，但是由于 CGo 模块的报错超出我的能力范围无法解决，所以只能用 python 来完成这部分工作。</p>
+<p><img src="https://oss.gonever.com/phppn6y355e1fce1594e11.png" alt="image.png"><br><em>golang 下使用 opencv 的报错</em></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">has_watermark</span>(<span class="params">img_name, watermark_name</span>):</span><br><span class="line">    <span class="comment"># 获取原始图片的灰化图</span></span><br><span class="line">    img_rgb = cv2.imread(img_name)</span><br><span class="line">    img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)</span><br><span class="line"></span><br><span class="line">    img_w, img_h = img_gray.shape[::-<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取水印的灰化图</span></span><br><span class="line">    img_template = cv2.imread(watermark_name, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 根据水印所在图片的大小，调整当前水印的大小，比如说我的水印是从宽度 540 的图片上处理出来的，如果当前图片的宽度是 480，就要进行缩放，比例为 480/540=0.889</span></span><br><span class="line">    w, h = img_template.shape[::-<span class="number">1</span>]</span><br><span class="line">    w, h = <span class="built_in">int</span>(w * img_w / <span class="number">540</span>), <span class="built_in">int</span>(h * img_w / <span class="number">540</span>)  <span class="comment"># 540 换成你的原始水印所在图片的宽度</span></span><br><span class="line">    pic = cv2.resize(img_template, (w, h))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 进行水印匹配，使用了 TM_CCOEFF_NORMED 算法</span></span><br><span class="line">    res = cv2.matchTemplate(img_gray, pic, cv2.TM_CCOEFF_NORMED)</span><br><span class="line">    <span class="comment"># 阈值，根据匹配的情况进行调整，如果匹配不到调小，如果匹配的过多了调大，阈值范围 (-1, 1)</span></span><br><span class="line">    threshold = <span class="number">0.4</span></span><br><span class="line"></span><br><span class="line">    loc = np.where(res &gt;= threshold)</span><br><span class="line">    x = loc[<span class="number">0</span>]</span><br><span class="line">    y = loc[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(x) <span class="keyword">and</span> <span class="built_in">len</span>(y):</span><br><span class="line">        <span class="keyword">for</span> pt <span class="keyword">in</span> <span class="built_in">zip</span>(*loc[::-<span class="number">1</span>]):</span><br><span class="line">            <span class="comment"># 一张图片可能会匹配到多个水印，我们只取第一个，为了避免覆盖不到，对水印的宽高稍微变大</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;x=&quot;</span> + <span class="built_in">str</span>(pt[<span class="number">0</span>]) + <span class="string">&quot;:y=&quot;</span> + <span class="built_in">str</span>(pt[<span class="number">1</span>]) + <span class="string">&quot;:w=&quot;</span> + <span class="built_in">str</span>(w + <span class="number">2</span>) + <span class="string">&quot;:h=&quot;</span> + <span class="built_in">str</span>(h + <span class="number">2</span>))</span><br><span class="line">            cv2.rectangle(img_rgb, pt, (pt[<span class="number">0</span>] + w + <span class="number">2</span>, pt[<span class="number">1</span>] + h + <span class="number">2</span>), (<span class="number">0</span>, <span class="number">255</span>, <span class="number">255</span>), <span class="number">2</span>, <span class="number">4</span>)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 如果匹配到把标记了水印的图片写入到新文件</span></span><br><span class="line">        new_name = os.path.dirname(os.path.abspath(img_name)) + <span class="string">&quot;/&quot;</span> + <span class="string">&quot;new&quot;</span> + os.path.basename(img_name)</span><br><span class="line">        cv2.imwrite(new_name, img_rgb)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure>
+
+<p>执行 <code>python watermark.py 1.jpg</code>，输出</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">python3.7 watermark.py 1.jpg</span></span><br><span class="line">x=375:y=900:w=149:h=37</span><br><span class="line">Found</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://oss.gonever.com/phpbJXidR5e1fd48c6e97f.png" alt="image.png"><br><em>1.jpg</em><br><img src="https://oss.gonever.com/php9cM6Xp5e1fd52814376.png" alt="image.png"><br><em>new_1.jpg</em></p>
+<h2 id="去除水印"><a href="#去除水印" class="headerlink" title="去除水印"></a>去除水印</h2><p>使用 ffmpeg 来去除水印，Mac 上你可以执行 <code>brew install ffmpeg</code> 来安装。</p>
+<p>执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -y -i 1.mp4 -vf &quot;delogo=x=375:y=900:w=149:h=37&quot;  new_1.mp4</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://oss.gonever.com/phpBRRu0c5e1fd890c9bfa.png" alt="image.png"><br><em>去水印后效果</em></p>
+<p>这样水印就被去除了。</p>
+<h2 id="⚠️警告"><a href="#⚠️警告" class="headerlink" title="⚠️警告"></a>⚠️警告</h2><p>本文仅为技术尝试，切勿用于非法用途，谨记谨记。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2020/01/13/%E4%BD%BF%E7%94%A8%20OpenCV%20%E5%92%8C%20FFmpeg%20%E5%A4%84%E7%90%86%E8%A7%86%E9%A2%91%E6%B0%B4%E5%8D%B0/" data-id="cljcm06ue004mhev6dkped2wl" data-title="使用 OpenCV 和 FFmpeg 处理视频水印" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/01/15/%E3%80%90%E8%AF%91%E3%80%91HTTP_2%20Server%20Push/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          【译】HTTP/2 Server Push
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/01/02/2020%20%E5%B9%B4%E4%BD%B3%E6%96%87%E4%B8%80%E8%A7%88(Updating...)/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">2020 年佳文一览(Updating...)</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORS/" rel="tag">CORS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeetCode/" rel="tag">LeetCode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Plan/" rel="tag">Plan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%82%9F/" rel="tag">感悟</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" rel="tag">诗词赋</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AC%E8%BD%BD/" rel="tag">转载</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CORS/" style="font-size: 10px;">CORS</a> <a href="/tags/Docker/" style="font-size: 11px;">Docker</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/LeetCode/" style="font-size: 16px;">LeetCode</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/MySQL/" style="font-size: 18px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 12px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 11px;">PHP</a> <a href="/tags/Plan/" style="font-size: 10px;">Plan</a> <a href="/tags/Redis/" style="font-size: 12px;">Redis</a> <a href="/tags/%E6%84%9F%E6%82%9F/" style="font-size: 14px;">感悟</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">技术</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 13px;">服务器</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 10px;">算法</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" style="font-size: 17px;">诗词赋</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">五月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">十二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/01/13/%E4%BD%BF%E7%94%A8%20awk%20%E5%91%BD%E4%BB%A4%E7%AD%9B%E9%80%89%20csv%20%E6%8C%87%E5%AE%9A%E8%A1%8C/">使用 awk 命令筛选 csv 指定行</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/17/linux%20%E6%9B%BF%E6%8D%A2%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2/">linux 替换多行字符串</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/07/%E8%A5%BF%E5%9B%AD%E5%90%9F/">西园吟</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/22/%E5%B0%91%E5%B9%B4%E6%B8%B8/">少年游</a>
+          </li>
+        
+          <li>
+            <a href="/2022/02/10/%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%20tcpdump%20%E7%9A%84%E4%BD%BF%E7%94%A8/">网络抓包工具 tcpdump 的使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Chen Gangyang<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

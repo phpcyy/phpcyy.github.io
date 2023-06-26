@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Castle，专属于自己的领地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Castle，专属于自己的领地">
+<meta property="og:url" content="https://www.gonever.com/page/5/">
+<meta property="og:site_name" content="Castle，专属于自己的领地">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="Chen Gangyang">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Castle，专属于自己的领地" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Castle，专属于自己的领地</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">我的沉思、笔记和回忆</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://www.gonever.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-const 和 define 在 PHP 中的区别" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/08/06/const%20%E5%92%8C%20define%20%E5%9C%A8%20PHP%20%E4%B8%AD%E7%9A%84%E5%8C%BA%E5%88%AB/" class="article-date">
+  <time class="dt-published" datetime="2018-08-06T01:53:11.000Z" itemprop="datePublished">2018-08-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/08/06/const%20%E5%92%8C%20define%20%E5%9C%A8%20PHP%20%E4%B8%AD%E7%9A%84%E5%8C%BA%E5%88%AB/">const 和 define 在 PHP 中的区别</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>在 PHP 中，<code>const</code> 和 <code>define</code> 都可以用来定义常量。但二者之间有什么区别呢？</p>
+<h2 id="const-和-define-的区别"><a href="#const-和-define-的区别" class="headerlink" title="const 和 define 的区别"></a>const 和 define 的区别</h2><ul>
+<li><p>const 是在编译阶段定义的，define 是在运行时定义的。 因此，const 不可以有条件的定义，但是 define 可以。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if (...) &#123;</span><br><span class="line">   const FOO = &#x27;BAR&#x27;; //非法的</span><br><span class="line">&#125;</span><br><span class="line">//然而</span><br><span class="line">if (...) &#123;</span><br><span class="line">  define(&#x27;FOO&#x27;, &#x27;BAR&#x27;);//合法的</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>const 只能接受静态标量（数字，字符串或者像 true、false、null、__FILE__等其他常量），而 define 接受任何表达式。不过从 PHP 5.6 开始，const 也开始支持表达式。</p>
+</li>
+<li><p>const 采用普通的常量名称，而 define 接受任何表达式作为名称。他可以做这样用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">for ($i = 0; $i &lt; 32; ++$i) &#123;</span><br><span class="line">  define(&#x27;BIT_&#x27; . $i, 1 &lt;&lt; $i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>const 的名称是大小写敏感的，但是 define 可以通过传递第三个参数为 true 来定义不区分名称大小写的常量。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">define(&#x27;FOO&#x27;, &#x27;BAR&#x27;, true);</span><br><span class="line">echo FOO; // BAR</span><br><span class="line">echo foo; // BAR</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="为什么我更赞成使用-const"><a href="#为什么我更赞成使用-const" class="headerlink" title="为什么我更赞成使用 const"></a>为什么我更赞成使用 const</h2><ul>
+<li><p>const 可读性更好。const 是一种语言结构而不是函数，而且能够在类中进行定义。</p>
+</li>
+<li><p>const 作为一种语言结构，可以通过自动化工具进行静态分析。</p>
+</li>
+<li><p>const 在当前命名空间中定义常量，而 define 必须传进去整个命名空间名。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">namespace A\B\C;</span><br><span class="line">// 比如要设置 A\B\C\FOO:</span><br><span class="line">const FOO = &#x27;BAR&#x27;;</span><br><span class="line">define(&#x27;A\B\C\FOO&#x27;, &#x27;BAR&#x27;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>const 从 PHP 5.6 开始支持被定义为数组，但是 define 还不支持。不过从 PHP 7 开始，两者都支持定义为数组了。</p>
+</li>
+</ul>
+<p>最后，请记住 const 可以在类和接口中定义类常量或者接口常量，但是 define 不能这样做 。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">class Foo &#123;</span><br><span class="line">    const BAR = 2; // 合法</span><br><span class="line">&#125;</span><br><span class="line">class Baz &#123;</span><br><span class="line">    define(&#x27;QUX&#x27;, 2); // 非法</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>除非你需要根据条件和表达式来定义常量，否则使用 const 而不是 define - 只是为了便于阅读！</p>
+<p>翻译自 <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/2447791/define-vs-const#answer-3193704">define() vs const</a>，版权归原作者所有。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/08/06/const%20%E5%92%8C%20define%20%E5%9C%A8%20PHP%20%E4%B8%AD%E7%9A%84%E5%8C%BA%E5%88%AB/" data-id="cljcm06tt0038hev6c5nm3xle" data-title="const 和 define 在 PHP 中的区别" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-进程学习小记: 僵尸进程和孤儿进程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/07/12/%E8%BF%9B%E7%A8%8B%E5%AD%A6%E4%B9%A0%E5%B0%8F%E8%AE%B0:%20%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B%E5%92%8C%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B/" class="article-date">
+  <time class="dt-published" datetime="2018-07-12T06:32:15.000Z" itemprop="datePublished">2018-07-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/07/12/%E8%BF%9B%E7%A8%8B%E5%AD%A6%E4%B9%A0%E5%B0%8F%E8%AE%B0:%20%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B%E5%92%8C%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B/">进程学习小记: 僵尸进程和孤儿进程</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="进程的状态"><a href="#进程的状态" class="headerlink" title="进程的状态"></a>进程的状态</h1><p>在操作系统中，我们学习过进程的几种状态，分别为就绪态、运行态和阻塞态。然而在实际的系统中，往往还会有两种状态，即新建态和终止态。 因此，一共有新建态、就绪态、运行态、阻塞态和终止态 5 种进程状态。</p>
+<h1 id="Linux-下使用-ps-能够查询的状态"><a href="#Linux-下使用-ps-能够查询的状态" class="headerlink" title="Linux 下使用 ps 能够查询的状态"></a>Linux 下使用 ps 能够查询的状态</h1><p>在 linux 和 unix 中，可以使用 <code>ps -l</code> 命令来查看进程状态，在实际的操作系统中，进程的状态要比预期的复杂的多。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">D  不可中断睡眠 (通常是在IO操作) 收到信号不唤醒和不可运行, 进程必须等待直到有中断发生  </span><br><span class="line">R  正在运行或可运行（在运行队列排队中）</span><br><span class="line">S  可中断睡眠 (休眠中, 受阻, 在等待某个条件的形成或接受到信号)</span><br><span class="line">T  已停止的 进程收到SIGSTOP, SIGSTP, SIGTIN, SIGTOU信号后停止运行</span><br><span class="line">X  死进程 (未开启)</span><br><span class="line">Z  僵尸进程  进程已终止, 但进程描述符存在, 直到父进程调用</span><br><span class="line">&lt;  高优先级</span><br><span class="line">N  低优先级</span><br><span class="line">L  有些页被锁进内存</span><br><span class="line">s  有子进程</span><br><span class="line">l  多线程，克隆线程</span><br><span class="line">+  前台进程</span><br></pre></td></tr></table></figure>
+
+<h1 id="fork-产生子进程"><a href="#fork-产生子进程" class="headerlink" title="fork 产生子进程"></a>fork 产生子进程</h1><p>在多线程中，我们需要生成新的进程，会通过使用 <code>fork</code> 来产生子进程。在子进程产生后，如果父进程处理方式不正确或者提前退出，则可能会出现<strong>僵尸进程</strong>和<strong>孤儿进程</strong>。</p>
+<p>在进程运行过程中，会将进程的一些信息（进程号，执行时间，退出码，打开的文件等）存入进程表，进程结束时会传递给父进程，父进程调用 <code>wait</code> 或者 <code>waitpid</code> 来释放符号表中的信息。</p>
+<h2 id="孤儿进程"><a href="#孤儿进程" class="headerlink" title="孤儿进程"></a>孤儿进程</h2><p>在父进程创建了子进程后，子进程会在结束时将进程表中的信息传递给父进程，然后将进程表中的信息移除。<strong>当子进程还没有结束，父进程提前退出时，子进程这时就被称为”孤儿进程”。</strong>孤儿进程会被进程号为1的<code>init</code>进程收养，代替其父进程完成善后工作。因此，<strong>孤儿进程不会对系统造成危害。</strong></p>
+<h2 id="僵尸进程"><a href="#僵尸进程" class="headerlink" title="僵尸进程"></a>僵尸进程</h2><h3 id="僵尸进程产生的原因"><a href="#僵尸进程产生的原因" class="headerlink" title="僵尸进程产生的原因"></a>僵尸进程产生的原因</h3><p><strong>在父进程创建子进程后，子进程已经结束，但是仍然占用符号表的状态，被称作”僵尸进程”。</strong> 这一过程任何进程都会遇到（除了 init 进程），但是如果父进程立即进行处理，这一时间会很短暂的。如果父进程迟迟不做处理，这时候就可以看到很多状态为 Z 的僵尸进程。</p>
+<p>僵尸进程无疑是有危害的，因为僵尸进程长时间占用进程号，如果系统长时间运行，可能会导致进程号耗尽的情况。</p>
+<h3 id="如何消除僵尸进程"><a href="#如何消除僵尸进程" class="headerlink" title="如何消除僵尸进程"></a>如何消除僵尸进程</h3><p>僵尸进程本身已经结束了，所以调用 <code>kill</code> 命令去结束僵尸进程是没有用的。其实僵尸进程的根源是父进程，因为父进程不去收养这些进程而形成了长时间存在的僵尸进程。</p>
+<p><strong>因此，杀死父进程可以结束僵尸进程。</strong>父进程被杀死后，<code>init</code> 进程会收养这些进程并移除其进程表中的信息。</p>
+<h1 id="使用两次-fork-避免僵尸进程"><a href="#使用两次-fork-避免僵尸进程" class="headerlink" title="使用两次 fork 避免僵尸进程"></a>使用两次 fork 避免僵尸进程</h1><p>当我们 <code>fork()</code> 一次后，存在父进程和子进程。这时有两种方法来避免产生僵尸进程：</p>
+<ul>
+<li>父进程调用 <code>waitpid()</code> 等函数来接收子进程退出状态。</li>
+<li>父进程先结束，子进程则自动托管到 init 进程（pid &#x3D; 1)</li>
+</ul>
+<p>第一种方法，有两种情况:</p>
+<ul>
+<li>父进程在创建子进程后等待子进程结束，然后执行自身业务 &#x3D;&gt; 如果子进程时间比较长，父进程的业务无法完成；</li>
+<li>父进程在执行自己业务后等待子进程结束 &#x3D;&gt; 子进程会长时间处于僵尸进程状态。</li>
+</ul>
+<p>第二种方法父进程如果有自身业务将无法进行，不可取。</p>
+<p>因此，我们可以通过两次 fork 来避免僵尸进程。</p>
+<ul>
+<li>第一次 fork: 父进程产生子进程 ，等待子进程结束；</li>
+<li>第二次 fork: 子进程产生孙子进程；</li>
+<li>子进程立即退出，孙子进程变成孤儿进程；</li>
+<li>父进程收到子进程结束信号，继续执行后续逻辑；</li>
+</ul>
+<p>这样，孙子进程由 init 进程负责收尸，子进程在创建孙子进程后立即由父进程收尸，便不会产生僵尸进程的问题了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/07/12/%E8%BF%9B%E7%A8%8B%E5%AD%A6%E4%B9%A0%E5%B0%8F%E8%AE%B0:%20%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B%E5%92%8C%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B/" data-id="cljcm22fv000ftiv695552sdm" data-title="进程学习小记: 僵尸进程和孤儿进程" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-CORS 跨域携带 Cookie 发送请求" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/07/05/CORS%20%E8%B7%A8%E5%9F%9F%E6%90%BA%E5%B8%A6%20Cookie%20%E5%8F%91%E9%80%81%E8%AF%B7%E6%B1%82/" class="article-date">
+  <time class="dt-published" datetime="2018-07-05T03:16:59.000Z" itemprop="datePublished">2018-07-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/07/05/CORS%20%E8%B7%A8%E5%9F%9F%E6%90%BA%E5%B8%A6%20Cookie%20%E5%8F%91%E9%80%81%E8%AF%B7%E6%B1%82/">CORS 跨域携带 Cookie 发送请求</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>当在 a.com 进行访问时，如何向 b.com 携带 b.com 的 cookie 发送一个请求？</p>
+<h1 id="情境"><a href="#情境" class="headerlink" title="情境"></a>情境</h1><p>a.com 是一个第三方网站，需要通过访问 b.com 的接口来获取用户的一些信息。这时候，b.com 上的用户已经登录了。</p>
+<h1 id="跨域请求"><a href="#跨域请求" class="headerlink" title="跨域请求"></a>跨域请求</h1><p>我们知道，在发送跨域请求时，需要后端设置一些请求头，否则浏览器不会允许客户端跨域发送请求。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Access-Control-Allow-Origin: a.com</span><br></pre></td></tr></table></figure>
+
+<p>这样，a.com 便可以调用 b.com 的接口了。</p>
+<p>但是，这样调用过去会发现，b.com 会返回用户未登录。<strong>原因是 b.com 的 cookie 没有发送过去。</strong></p>
+<h1 id="跨域携带-Cookie"><a href="#跨域携带-Cookie" class="headerlink" title="跨域携带 Cookie"></a>跨域携带 Cookie</h1><p>这时候需要后端添加另外一个请求头：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Access-Control-Allow-Credentials: true</span><br></pre></td></tr></table></figure>
+
+<p>前端在发送请求时也需要设置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xhr = new XMLHttpRequest();</span><br><span class="line">xhr.withCredentials= true;  //关键句</span><br><span class="line">xhr.open(&quot;GET&quot;, url);</span><br><span class="line">xhr.send();</span><br></pre></td></tr></table></figure>
+
+<p>这样，后端就可以接收到前端携带的 Cookie 了。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>综上所述，前端需要在发送 XMLHttpRequest 的时候加上</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xhr.withCredentials= true;</span><br></pre></td></tr></table></figure>
+
+<p>后端需要设置请求头:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Access-Control-Allow-Origin: a.com //这里需要换成相应的发起请求的域名</span><br><span class="line">Access-Control-Allow-Credentials: true</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/07/05/CORS%20%E8%B7%A8%E5%9F%9F%E6%90%BA%E5%B8%A6%20Cookie%20%E5%8F%91%E9%80%81%E8%AF%B7%E6%B1%82/" data-id="cljcm06sb0009hev60kzj0zl9" data-title="CORS 跨域携带 Cookie 发送请求" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CORS/" rel="tag">CORS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-装修草图" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/06/17/%E8%A3%85%E4%BF%AE%E8%8D%89%E5%9B%BE/" class="article-date">
+  <time class="dt-published" datetime="2018-06-17T07:27:31.000Z" itemprop="datePublished">2018-06-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/06/17/%E8%A3%85%E4%BF%AE%E8%8D%89%E5%9B%BE/">装修草图</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="客厅"><a href="#客厅" class="headerlink" title="客厅"></a>客厅</h2><h3 id="客厅效果"><a href="#客厅效果" class="headerlink" title="客厅效果"></a>客厅效果</h3><p><img src="http://static.house.sina.com.cn/supportsjiaju/fitment/xiuphoto/0b/f0/3d1208fbd008d5e6360ad55948c8_61616_52d4a54e8f3a8_water.jpg" alt="客厅效果图"></p>
+<h3 id="客厅窗户效果"><a href="#客厅窗户效果" class="headerlink" title="客厅窗户效果"></a>客厅窗户效果</h3><p><img src="http://xiaoguotu.sj456.cn/uploadfile/2015/0909/20150909152807_62363.jpg" alt="客厅窗户图"></p>
+<h3 id="餐厅"><a href="#餐厅" class="headerlink" title="餐厅"></a>餐厅</h3><p><img src="http://xiaoguotu.sj456.cn/uploadfile/2015/0627/20150627102517_66168.jpg" alt="餐厅效果图"></p>
+<h2 id="厨房"><a href="#厨房" class="headerlink" title="厨房"></a>厨房</h2><p><img src="http://tgi1.jia.com/zximg/201602/0f64e8f10798.jpg" alt="厨房效果图"></p>
+<h2 id="卫生间"><a href="#卫生间" class="headerlink" title="卫生间"></a>卫生间</h2><p><img src="http://www.26091.com/data/0000/05/14995050236.jpg" alt="卫生间效果图"></p>
+<h2 id="卧室"><a href="#卧室" class="headerlink" title="卧室"></a>卧室</h2><p><img src="http://img.pconline.com.cn/images/upload/upc/tx/housephotolib/1612/20/c1/32853477_1482205104984_690x460.jpg" alt="卧室效果"> 或者 <img src="http://img1.homekoocdn.com/huxing_fangan/images/taocan_pic_1024/737/2013_03_07/73663_21c96845231bead5864d1d24e255da46.jpg" alt="卧室效果2"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/06/17/%E8%A3%85%E4%BF%AE%E8%8D%89%E5%9B%BE/" data-id="cljcm06uw005xhev6dtnqfcnv" data-title="装修草图" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-Redis 分布式锁的使用" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/05/27/Redis%20%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E4%BD%BF%E7%94%A8/" class="article-date">
+  <time class="dt-published" datetime="2018-05-27T14:13:05.000Z" itemprop="datePublished">2018-05-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/05/27/Redis%20%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E4%BD%BF%E7%94%A8/">Redis 分布式锁的使用</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>今天阅读了 Redis 的分布式锁相关部分，在这里做一下笔记。</p>
+<p>Redis 的分布式锁主要依赖于 Watch 命令。</p>
+<p>Watch 命令的语法为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">watch key</span><br></pre></td></tr></table></figure>
+
+<p>当进入 watch 状态后，修改该 key 时会去检查 key 在执行过程中是否已经被修改。如果已经被修改，则命令会执行失败。</p>
+<p>如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">set amount 1000</span><br><span class="line"></span><br><span class="line">watch amount</span><br><span class="line">multi</span><br><span class="line">decr amount</span><br><span class="line">exec</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>watch amount</code> 后如果有别人已经修改了 amount 值，那么之后的事务将会失败。这样就实现了简单的乐观锁。</p>
+<p><code>watch</code> 执行之后可以执行 <code>unwatch</code>操作来取消观察状态。例如 <code>watch</code> 之后去判断库存数量，如果已经是 0，可以取消观察并直接向用户返回库存消耗完毕。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/05/27/Redis%20%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E4%BD%BF%E7%94%A8/" data-id="cljcm06tp002yhev6hr4q37b4" data-title="Redis 分布式锁的使用" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-使用 Expect 自动完成 ssh 远程登录" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/05/25/%E4%BD%BF%E7%94%A8%20Expect%20%E8%87%AA%E5%8A%A8%E5%AE%8C%E6%88%90%20ssh%20%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95/" class="article-date">
+  <time class="dt-published" datetime="2018-05-25T02:45:51.000Z" itemprop="datePublished">2018-05-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/05/25/%E4%BD%BF%E7%94%A8%20Expect%20%E8%87%AA%E5%8A%A8%E5%AE%8C%E6%88%90%20ssh%20%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95/">使用 Expect 自动完成 ssh 远程登录</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="为什么要使用Expect-？"><a href="#为什么要使用Expect-？" class="headerlink" title="为什么要使用Expect ？"></a>为什么要使用Expect ？</h2><p>在执行 ssh 远程登录时，有时候需要在配置了密钥文件的情况下仍然需要输入密码，这一步骤无法省略，而密码冗长有让我们有必要采取措施来绕过密码输入的步骤。而 Expect 就能够非常简单的完成此任务。</p>
+<h2 id="Expect-简介"><a href="#Expect-简介" class="headerlink" title="Expect 简介"></a>Expect 简介</h2><blockquote>
+<p>Expect是Unix系统中用来进行自动化控制和测试的软件工具，由DonLibes制作，作为Tcl脚本语言的一个扩展，应用在交互式软件中如telnet，ftp，Passwd，fsck，rlogin，tip，ssh等等。该工具利用Unix伪终端包装其子进程，允许任意程序通过终端接入进行自动化控制；也可利用Tk工具，将交互程序包装在X11的图形用户界面中。 　　简单地说，expect是一个工具，可以根据用户设定的规则和系统进程进行自动化交互，例如远程登陆的密码输入、自动化的执行远程命令。</p>
+</blockquote>
+<h2 id="Expect-基本命令"><a href="#Expect-基本命令" class="headerlink" title="Expect 基本命令"></a>Expect 基本命令</h2><p>send：用于向进程发送字符串<br>expect：从进程接收字符串<br>spawn：启动新的进程<br>interact：允许用户交互</p>
+<h2 id="编写脚本"><a href="#编写脚本" class="headerlink" title="编写脚本"></a>编写脚本</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> #!/usr/bin/expect</span><br><span class="line">spawn ssh user@host -i ~/.ssh/user.pem</span><br><span class="line"># 将下方字符串替换为自己的终端输出的提示</span><br><span class="line">expect &quot;Enter passphrase for key &#x27;/Users/phpcyy/.ssh/user.pem&#x27;:&quot;</span><br><span class="line">send &quot;$PASSWORD\r&quot;</span><br><span class="line">interact</span><br></pre></td></tr></table></figure>
+
+<p>ps: 注意将上方的参数替换成自己相应的设置。</p>
+<h2 id="执行脚本"><a href="#执行脚本" class="headerlink" title="执行脚本"></a>执行脚本</h2><p>添加可执行权限，并执行该脚本，就可以自动连上远程的服务器了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/05/25/%E4%BD%BF%E7%94%A8%20Expect%20%E8%87%AA%E5%8A%A8%E5%AE%8C%E6%88%90%20ssh%20%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95/" data-id="cljcm06u9004fhev6d6839et8" data-title="使用 Expect 自动完成 ssh 远程登录" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-CentOS 将 Redis 配置为系统服务" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/04/11/CentOS%20%E5%B0%86%20Redis%20%E9%85%8D%E7%BD%AE%E4%B8%BA%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" class="article-date">
+  <time class="dt-published" datetime="2018-04-11T02:54:40.000Z" itemprop="datePublished">2018-04-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/04/11/CentOS%20%E5%B0%86%20Redis%20%E9%85%8D%E7%BD%AE%E4%B8%BA%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/">CentOS 将 Redis 配置为系统服务</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>创建 redis.service</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd  /usr/lib/systemd/system</span><br><span class="line">touch redis.service</span><br></pre></td></tr></table></figure>
+
+<p>编辑内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Redis Server</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">PIDFile=/var/run/redis_6379.pid</span><br><span class="line">ExecStart=/usr/local/bin/redis-server /etc/redis.conf</span><br><span class="line">ExecStop=/usr/local/bin/redis-cli -a passwd shutdown</span><br><span class="line">ExecReload=/bin/kill -s HUP $MAINPID</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=mutli-user.target</span><br></pre></td></tr></table></figure>
+
+<p>创建软链接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -s `pwd`/redis.service /etc/systemd/system/multi-user.target.wants</span><br></pre></td></tr></table></figure>
+
+<p>重新载入 systemctl 并启动服务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start redis.service</span><br></pre></td></tr></table></figure>
+
+<p>查看状态</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status redis.service</span><br></pre></td></tr></table></figure>
+
+<p>关闭 Redis</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop redis.service</span><br></pre></td></tr></table></figure>
+
+<p>开机自启</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl enable redis.service</span><br></pre></td></tr></table></figure>
+
+<p>是否开机自启</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl is-enabled redis.service</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/04/11/CentOS%20%E5%B0%86%20Redis%20%E9%85%8D%E7%BD%AE%E4%B8%BA%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" data-id="cljcm06si000ghev6c4xva70u" data-title="CentOS 将 Redis 配置为系统服务" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-CURL 的常见的使用方法" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/03/18/CURL%20%E7%9A%84%E5%B8%B8%E8%A7%81%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" class="article-date">
+  <time class="dt-published" datetime="2018-03-18T11:54:08.000Z" itemprop="datePublished">2018-03-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/03/18/CURL%20%E7%9A%84%E5%B8%B8%E8%A7%81%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/">CURL 的常见的使用方法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>CURL 是最简单的发送 http 请求的方法之一，在 Linux 上用来模拟请求和测试 API 十分有用，这里记录一下 CURL 常见的使用方法。</p>
+<h2 id="发送-GET-请求"><a href="#发送-GET-请求" class="headerlink" title="发送 GET 请求"></a>发送 GET 请求</h2><p>发送 GET 请求非常简单，只需要在命令后直接跟上 URL 就可以了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl &quot;http://www.baidu.com&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="发送其他-HTTP-动词"><a href="#发送其他-HTTP-动词" class="headerlink" title="发送其他 HTTP 动词"></a>发送其他 HTTP 动词</h2><p>除了 GET 以外，我们经常还会用到诸如 POST，PUT，DELETE 等动词，只要加上 <code>-x</code> 参数就可以了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST &quot;http://www.weibo.com/login&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="添加请求参数"><a href="#添加请求参数" class="headerlink" title="添加请求参数"></a>添加请求参数</h2><p>发送 GET 请求非常简单，只需要在 URL 后添加所需参数即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl &quot;http://www.baidu.com?s=hello&quot;</span><br></pre></td></tr></table></figure>
+
+<p>发送其他类型的请求可以用 <code>--data</code> 或者 <code>-d</code> 选项指定参数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X &quot;http://www.weibo.com/login&quot; -d &quot;name=master&amp;password=123456&quot;</span><br></pre></td></tr></table></figure>
+
+<p>发送带有文件需要使用 multipart&#x2F;form-data 类型的 Content-Type。使用 CURL 发送文件也很简单，使用 –form 参数即可。其中文件类型需要加上<code>@</code>，然后指定文件位置；字符串类型则直接使用字符串值即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl --form &quot;headimg=@1.jpg&quot; --form &quot;user=master&quot; &quot;http://www.weibo.com/profile&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="获取-Header-信息"><a href="#获取-Header-信息" class="headerlink" title="获取 Header 信息"></a>获取 Header 信息</h2><p>有时候我们想看到响应的头信息来进行调试。只需要添加 <code>-I</code> 参数即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -I &quot;http://www.baidu.com&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="显示连接过程"><a href="#显示连接过程" class="headerlink" title="显示连接过程"></a>显示连接过程</h2><p>使用 <code>-V</code> 参数可以得到连接的详细信息。包括端口连接和 HTTP 请求的全文。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -v &quot;https://www.baidu.com&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="添加-Cookie"><a href="#添加-Cookie" class="headerlink" title="添加 Cookie"></a>添加 Cookie</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl --cookie &quot;SESSIONID=2123112312&quot; &quot;http://user.qq.com&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="添加-Header"><a href="#添加-Header" class="headerlink" title="添加 Header"></a>添加 Header</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl --header &quot;Content-Type:application/json&quot; &quot;http://test.qq.com&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="HTTP-认证"><a href="#HTTP-认证" class="headerlink" title="HTTP 认证"></a>HTTP 认证</h2><p>有些网站可能启用了 Http 基本认证，需要指定用户名和密码才可以访问。这时使用 <code>--user</code> 参数就可以了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl --user &quot;foo=bar&quot; &quot;http://auth.test.com&quot;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/03/18/CURL%20%E7%9A%84%E5%B8%B8%E8%A7%81%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" data-id="cljcm06sg000dhev6e3d0bfc0" data-title="CURL 的常见的使用方法" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-MySQL 学习笔记（三）：索引的作用、设置和注意事项" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/03/04/MySQL%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9A%E7%B4%A2%E5%BC%95%E7%9A%84%E4%BD%9C%E7%94%A8%E3%80%81%E8%AE%BE%E7%BD%AE%E5%92%8C%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/" class="article-date">
+  <time class="dt-published" datetime="2018-03-04T03:35:04.000Z" itemprop="datePublished">2018-03-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/03/04/MySQL%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9A%E7%B4%A2%E5%BC%95%E7%9A%84%E4%BD%9C%E7%94%A8%E3%80%81%E8%AE%BE%E7%BD%AE%E5%92%8C%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/">MySQL 学习笔记（三）：索引的作用、设置和注意事项</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>当表中数据很大的时候，根据条件进行查询时会变的很慢。因此，通过设置索引来加快查询速度就非常有必要了。</p>
+<h2 id="索引为什么快？"><a href="#索引为什么快？" class="headerlink" title="索引为什么快？"></a>索引为什么快？</h2><ol>
+<li>索引是有序的，增加索引后可以使用定位算法迅速找到查询的值。</li>
+<li>JOIN 时可以快速的根据索引值来判断 JOIN 条件，大大减少了查询次数</li>
+<li>索引空间小，可以放在内存中，加快查询速度。</li>
+</ol>
+<h2 id="索引的作用"><a href="#索引的作用" class="headerlink" title="索引的作用"></a>索引的作用</h2><ol>
+<li>加快条件查询（where 和 join）的速度。</li>
+<li>快速找到索引列的最大值和最小值（大大加快 MIN() 和 MAX() 函数的速度）。</li>
+<li>高效完成分类、分组和排序操作(加快 ORDER BY 和 GROUP BY 的速度)。</li>
+<li>如果只查询索引列包含的值时，可以直接从索引中获取相关信息。</li>
+</ol>
+<h2 id="索引的注意事项"><a href="#索引的注意事项" class="headerlink" title="索引的注意事项"></a>索引的注意事项</h2><ol>
+<li>为用于搜索、排序和分组的列创建索引，而对于用作输出显示的列不用创建索引。</li>
+<li>认真考虑数据列基数。重复数过高的列不要设置索引。</li>
+<li>让索引尽量短小。索引列的数据类型长度尽量短。</li>
+<li>索引字符串值的前缀。</li>
+<li>利用最左前缀。</li>
+<li>不要建立过多的索引。</li>
+<li>让索引类型和比较类型相匹配。如果是精确查找，散列索引更加高效；如果是范围查找，B 树索引则更加高效。</li>
+<li>利用慢日志查出来性能低下的查询。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/03/04/MySQL%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9A%E7%B4%A2%E5%BC%95%E7%9A%84%E4%BD%9C%E7%94%A8%E3%80%81%E8%AE%BE%E7%BD%AE%E5%92%8C%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/" data-id="cljcm06tb001vhev60uwf0viq" data-title="MySQL 学习笔记（三）：索引的作用、设置和注意事项" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-使用加法和位运算实现简单乘法" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/02/24/%E4%BD%BF%E7%94%A8%E5%8A%A0%E6%B3%95%E5%92%8C%E4%BD%8D%E8%BF%90%E7%AE%97%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E4%B9%98%E6%B3%95/" class="article-date">
+  <time class="dt-published" datetime="2018-02-24T04:23:08.000Z" itemprop="datePublished">2018-02-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2018/02/24/%E4%BD%BF%E7%94%A8%E5%8A%A0%E6%B3%95%E5%92%8C%E4%BD%8D%E8%BF%90%E7%AE%97%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E4%B9%98%E6%B3%95/">使用加法和位运算实现简单乘法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><code>m * n</code> 就是将 m 进行 n 次累加。如果简单的使用 for 循环，当循环次数很大时无疑很慢。</p>
+<p>因此我们可以考虑使用迭代。“一生二，二生三，三生万物”，这句话在这里可以得到体现。比如 5 * 9，1 * 9 &#x3D; 9；2 * 9 &#x3D; 9 + 9 &#x3D;18；4 * 9 &#x3D; 18 + 18 &#x3D; 36；5 * 9 &#x3D; 36 + 9 &#x3D; 45；</p>
+<p>因此 5 * 9 最终转化为了 4 * 9 + 1 * 9。乘法转化为了加法。通过观察可以发现 5 的 二进制为 0b101，刚好符合 4 * 9 + 1 * 9。</p>
+<p>因此任何乘法都可以转换为加法。m * n，将 m 转为 2 进制，然后逐位求出其位数对应的乘积，相加便是最终的结果。</p>
+<p>例如 13 * 16， 13可以转化为 0b1101，依次迭代，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1      1     0     1</span><br><span class="line">128    64    32    16</span><br></pre></td></tr></table></figure>
+
+<p>结果相加为 128 + 64 + 16 &#x3D; 208 。</p>
+<p>转化为算法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">func mul(m int, n int) int &#123;</span><br><span class="line">    //将较小者进行迭代可以减少循环次数</span><br><span class="line">    if m &gt; n &#123;</span><br><span class="line">        m, n = n, m</span><br><span class="line">    &#125;</span><br><span class="line">    result := 0</span><br><span class="line">    for m &gt; 0 &#123;</span><br><span class="line">        //取余运算</span><br><span class="line">        if m&amp;1 == 1 &#123;</span><br><span class="line">            result = n + result</span><br><span class="line">        &#125;</span><br><span class="line">        //n = 2*n，对应例子中的第二行</span><br><span class="line">        n = n &lt;&lt; 1</span><br><span class="line">        //m = m/2，对应例子中的第一行</span><br><span class="line">        m = m &gt;&gt; 1</span><br><span class="line">    &#125;</span><br><span class="line">    return result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2018/02/24/%E4%BD%BF%E7%94%A8%E5%8A%A0%E6%B3%95%E5%92%8C%E4%BD%8D%E8%BF%90%E7%AE%97%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E4%B9%98%E6%B3%95/" data-id="cljcm06uj004yhev692td7udg" data-title="使用加法和位运算实现简单乘法" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/page/4/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/6/">下一页 &raquo;</a>
+  </nav>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORS/" rel="tag">CORS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeetCode/" rel="tag">LeetCode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Plan/" rel="tag">Plan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%82%9F/" rel="tag">感悟</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" rel="tag">诗词赋</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AC%E8%BD%BD/" rel="tag">转载</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CORS/" style="font-size: 10px;">CORS</a> <a href="/tags/Docker/" style="font-size: 11px;">Docker</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/LeetCode/" style="font-size: 16px;">LeetCode</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/MySQL/" style="font-size: 18px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 12px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 11px;">PHP</a> <a href="/tags/Plan/" style="font-size: 10px;">Plan</a> <a href="/tags/Redis/" style="font-size: 12px;">Redis</a> <a href="/tags/%E6%84%9F%E6%82%9F/" style="font-size: 14px;">感悟</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">技术</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 13px;">服务器</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 10px;">算法</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" style="font-size: 17px;">诗词赋</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">五月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">十二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/01/13/%E4%BD%BF%E7%94%A8%20awk%20%E5%91%BD%E4%BB%A4%E7%AD%9B%E9%80%89%20csv%20%E6%8C%87%E5%AE%9A%E8%A1%8C/">使用 awk 命令筛选 csv 指定行</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/17/linux%20%E6%9B%BF%E6%8D%A2%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2/">linux 替换多行字符串</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/07/%E8%A5%BF%E5%9B%AD%E5%90%9F/">西园吟</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/22/%E5%B0%91%E5%B9%B4%E6%B8%B8/">少年游</a>
+          </li>
+        
+          <li>
+            <a href="/2022/02/10/%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%20tcpdump%20%E7%9A%84%E4%BD%BF%E7%94%A8/">网络抓包工具 tcpdump 的使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Chen Gangyang<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Golang 的熔断器调研 | Castle，专属于自己的领地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="什么是雪崩效应？在微服务架构中通常会有多个服务层调用，基础服务的故障可能会导致级联故障，进而造成整个系统不可用的情况，这种现象被称为服务雪崩效应。服务雪崩效应是一种因服务提供者的不可用导致服务消费者的不可用，并将不可用逐渐放大的过程。 如果下图所示：A 作为服务提供者，B 为 A 的服务消费者，C 和 D 是 B 的服务消费者。A 不可用引起了 B 的不可用，并将不可用像滚雪球一样放大到 C 和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang 的熔断器调研">
+<meta property="og:url" content="https://www.gonever.com/2020/04/20/Golang%20%E7%9A%84%E7%86%94%E6%96%AD%E5%99%A8%E8%B0%83%E7%A0%94/">
+<meta property="og:site_name" content="Castle，专属于自己的领地">
+<meta property="og:description" content="什么是雪崩效应？在微服务架构中通常会有多个服务层调用，基础服务的故障可能会导致级联故障，进而造成整个系统不可用的情况，这种现象被称为服务雪崩效应。服务雪崩效应是一种因服务提供者的不可用导致服务消费者的不可用，并将不可用逐渐放大的过程。 如果下图所示：A 作为服务提供者，B 为 A 的服务消费者，C 和 D 是 B 的服务消费者。A 不可用引起了 B 的不可用，并将不可用像滚雪球一样放大到 C 和">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://oss.gonever.com/phpShK1Bz5e9d3b61b0afe.png">
+<meta property="og:image" content="https://oss.gonever.com/php2hXnQk5e9d3c1e7dfab.png">
+<meta property="article:published_time" content="2020-04-20T06:18:32.000Z">
+<meta property="article:modified_time" content="2023-03-11T03:33:26.000Z">
+<meta property="article:author" content="Chen Gangyang">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content="Golang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://oss.gonever.com/phpShK1Bz5e9d3b61b0afe.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Castle，专属于自己的领地" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Castle，专属于自己的领地</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">我的沉思、笔记和回忆</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://www.gonever.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Golang 的熔断器调研" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/04/20/Golang%20%E7%9A%84%E7%86%94%E6%96%AD%E5%99%A8%E8%B0%83%E7%A0%94/" class="article-date">
+  <time class="dt-published" datetime="2020-04-20T06:18:32.000Z" itemprop="datePublished">2020-04-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Golang 的熔断器调研
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是雪崩效应？"><a href="#什么是雪崩效应？" class="headerlink" title="什么是雪崩效应？"></a>什么是雪崩效应？</h2><p>在微服务架构中通常会有多个服务层调用，基础服务的故障可能会导致级联故障，进而造成整个系统不可用的情况，这种现象被称为服务雪崩效应。<strong>服务雪崩效应</strong>是一种因<strong>服务提供者的不可用</strong>导致<strong>服务消费者的不可用</strong>，并将不可用逐渐放大的过程。</p>
+<p>如果下图所示：A 作为服务提供者，B 为 A 的服务消费者，C 和 D 是 B 的服务消费者。A 不可用引起了 B 的不可用，并将不可用像滚雪球一样放大到 C 和 D 时，雪崩效应就形成了。</p>
+<p>另外，在 A 不可用的情况下，由于 B 的重试会放大 A 的请求量，使 A 更加难以恢复。</p>
+<p><img src="https://oss.gonever.com/phpShK1Bz5e9d3b61b0afe.png" alt="image.png"></p>
+<h2 id="熔断器"><a href="#熔断器" class="headerlink" title="熔断器"></a>熔断器</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>熔断器模式可以有效防止对故障服务的不断重试，可以使服务调用者继续执行，不用等待错误的修正，或者浪费 CPU 等待超时发生。熔断器模式也可以使应用程序能够诊断错误是否已经修正，如果已经修正，应用程序会再次尝试调用操作。</p>
+<h3 id="能力"><a href="#能力" class="headerlink" title="能力"></a>能力</h3><p>熔断器模式为远程服务提供的关键能力：</p>
+<ul>
+<li>快速失败<br>当远程服务处于降级状态时，应用程序将会快速失败，并防止通常会拖垮整个应用程序的资源耗尽问题的出现。在大多数中断情况下，最好是部分服务关闭而不是完全关闭。</li>
+<li>优雅地失败<br>通过超时和快速失败，熔断器模式使应用程序开发人员有能力优雅地失败或提供替代方案。</li>
+<li>无缝恢复<br>熔断器模式可以定期检查所请求的资源是否重新上线，并在没有认为干预的情况下重新允许对该资源进行访问。</li>
+</ul>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ul>
+<li>关闭状态(Closed)<br>在关闭状态下，熔断器会放行请求；通过计数器来判断当前的服务状态，当超过阈值时进入打开状态；当到达设定的间隔时间后会清空计数器，重新开始计数。</li>
+<li>打开状态(Open)<br>在打开状态下，熔断器会拦截所有请求并返回失败；当到达熔断器的超时时间(timeout)后进入半打开状态。</li>
+<li>半打开状态(Half-Open)<br>在半打开状态下，熔断器会放行设定的个数个请求，如果请求全部成功，则进入关闭状态；如果有任何失败，则进入打开状态。</li>
+</ul>
+<p><img src="https://oss.gonever.com/php2hXnQk5e9d3c1e7dfab.png" alt="image.png"><br><em>熔断器状态机</em></p>
+<h3 id="熔断器的选型"><a href="#熔断器的选型" class="headerlink" title="熔断器的选型"></a>熔断器的选型</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/sony/gobreaker">github.com&#x2F;sony&#x2F;gobreaker</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/rubyist/circuitbreaker">github.com&#x2F;rubyist&#x2F;circuitbreaker</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/mercari/go-circuitbreaker">github.com&#x2F;mercari&#x2F;go-circuitbreaker</a></li>
+</ul>
+<p>对比项&#x2F;框架</p>
+<p>sony&#x2F;gobreaker</p>
+<p>rubyist&#x2F;circuitbreaker</p>
+<p>mercari&#x2F;go-circuitbreaker</p>
+<p>Stars</p>
+<p>1.1k</p>
+<p>867</p>
+<p>193</p>
+<p>Forks</p>
+<p>79</p>
+<p>94</p>
+<p>7</p>
+<p>Issues Opened</p>
+<p>4</p>
+<p>10</p>
+<p>1</p>
+<p>Issues Closed</p>
+<p>9</p>
+<p>15</p>
+<p>0</p>
+<p>Last Updated</p>
+<p>2019-11-25</p>
+<p>2019-10-21</p>
+<p>2019-12-27</p>
+<p>Latest Version</p>
+<p>v0.4.1</p>
+<p>v2.2.1</p>
+<p>&#x2F;</p>
+<p>Complexity</p>
+<p>Easy</p>
+<p>Complex</p>
+<p>Middle</p>
+<p>CancelContext Support</p>
+<p>No</p>
+<p>Yes</p>
+<p>Yes</p>
+<p>Deadline Support</p>
+<p>No</p>
+<p>Yes</p>
+<p>Yes</p>
+<p>Panel Support</p>
+<p>No</p>
+<p>Yes</p>
+<p>No</p>
+<p>External Call Support</p>
+<p>No</p>
+<p>Yes</p>
+<p>Yes</p>
+<p><strong><a target="_blank" rel="noopener" href="https://github.com/sony/gobreaker">github.com&#x2F;sony&#x2F;gobreaker</a></strong></p>
+<p>优点：</p>
+<ul>
+<li>简单、实现了完整的熔断器</li>
+<li>sony 出品、稳定、star 最多</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>只支持传入 Func 的方式，如果返回错误则会判定为失败；如果忽略错误，则会在外层丢失错误。</li>
+<li>不支持 CancelContext 和 Timeout，可能会将非上游的错误识别为上游错误。</li>
+</ul>
+<p><strong><a target="_blank" rel="noopener" href="https://github.com/rubyist/circuitbreaker">github.com&#x2F;rubyist&#x2F;circuitbreaker</a></strong></p>
+<p>优点：</p>
+<ul>
+<li>提供了完整的熔断器实现，直接支持错误率和错误个数的配置。</li>
+<li>提供了超时和 CancelContext 的支持。</li>
+<li>提供了 Panel，在服务中用到多个熔断器的时候可简化实现。</li>
+<li>提供了非 Func 方式的支持，便于自定义是否错误和返回正常的数据结构。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>实现相对复杂，学习成本较高。</li>
+</ul>
+<p><strong><a target="_blank" rel="noopener" href="https://github.com/mercari/go-circuitbreaker">github.com&#x2F;mercari&#x2F;go-circuitbreaker</a></strong></p>
+<p>优点：</p>
+<ul>
+<li>供了完整的熔断器实现</li>
+<li>提供了 CancelContext 和 DeadlineContext 的支持。</li>
+<li>提供了 IgnoreErr 的支持，可以忽略部分错误。</li>
+<li>提供了非 Func 方式的支持，便于自定义是否错误返回正常的数据结构。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>项目没有发布稳定版本的 tag。</li>
+<li>issue 少，star 少，可能未得到充分验证。</li>
+</ul>
+<p>个人倾向于选择 <a href="github.com/rubyist/circuitbreaker">github.com&#x2F;rubyist&#x2F;circuitbreaker</a>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2020/04/20/Golang%20%E7%9A%84%E7%86%94%E6%96%AD%E5%99%A8%E8%B0%83%E7%A0%94/" data-id="cljcm06sr000yhev66y2hbc4j" data-title="Golang 的熔断器调研" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/06/19/%E4%BF%AE%E6%94%B9%20Docker%20%E5%92%8C%20docker-compose%20%E4%B8%8B%20MySQL%20%E7%9A%84%E9%BB%98%E8%AE%A4%E5%AD%97%E7%AC%A6%E9%9B%86/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          修改 Docker 和 docker-compose 下 MySQL 的默认字符集
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/03/16/%E9%9A%8F%E6%97%B6%E9%9A%8F%E5%9C%B0%E4%BD%BF%E7%94%A8%20SSH%20%E8%BF%9E%E6%8E%A5%E5%B1%80%E5%9F%9F%E7%BD%91%E5%86%85%E7%9A%84%20Mac/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">随时随地使用 SSH 连接局域网内的 Mac</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORS/" rel="tag">CORS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeetCode/" rel="tag">LeetCode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Plan/" rel="tag">Plan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%82%9F/" rel="tag">感悟</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" rel="tag">诗词赋</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AC%E8%BD%BD/" rel="tag">转载</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CORS/" style="font-size: 10px;">CORS</a> <a href="/tags/Docker/" style="font-size: 11px;">Docker</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/LeetCode/" style="font-size: 16px;">LeetCode</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/MySQL/" style="font-size: 18px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 12px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 11px;">PHP</a> <a href="/tags/Plan/" style="font-size: 10px;">Plan</a> <a href="/tags/Redis/" style="font-size: 12px;">Redis</a> <a href="/tags/%E6%84%9F%E6%82%9F/" style="font-size: 14px;">感悟</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">技术</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 13px;">服务器</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 10px;">算法</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" style="font-size: 17px;">诗词赋</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">五月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">十二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/01/13/%E4%BD%BF%E7%94%A8%20awk%20%E5%91%BD%E4%BB%A4%E7%AD%9B%E9%80%89%20csv%20%E6%8C%87%E5%AE%9A%E8%A1%8C/">使用 awk 命令筛选 csv 指定行</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/17/linux%20%E6%9B%BF%E6%8D%A2%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2/">linux 替换多行字符串</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/07/%E8%A5%BF%E5%9B%AD%E5%90%9F/">西园吟</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/22/%E5%B0%91%E5%B9%B4%E6%B8%B8/">少年游</a>
+          </li>
+        
+          <li>
+            <a href="/2022/02/10/%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%20tcpdump%20%E7%9A%84%E4%BD%BF%E7%94%A8/">网络抓包工具 tcpdump 的使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Chen Gangyang<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

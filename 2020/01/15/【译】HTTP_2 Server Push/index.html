@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>【译】HTTP/2 Server Push | Castle，专属于自己的领地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="入门HTTP&#x2F;2 旨在解决许多 HTTP&#x2F;1.x 的缺点。现在的网页使用很多 HTML、CSS、JavaScript、图片等资源，在 HTTP&#x2F;1.x 中，每个资源必须被显式请求。这会是一个漫长的过程。浏览器先获取 HTML，然后一边解析页面，一边获取更多资源。服务器必须等着浏览器发起每次请求，这就导致网络会经常空闲、未充分利用起来。 为了改善延迟，HTTP&amp;#x2F">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【译】HTTP&#x2F;2 Server Push">
+<meta property="og:url" content="https://www.gonever.com/2020/01/15/%E3%80%90%E8%AF%91%E3%80%91HTTP_2%20Server%20Push/">
+<meta property="og:site_name" content="Castle，专属于自己的领地">
+<meta property="og:description" content="入门HTTP&#x2F;2 旨在解决许多 HTTP&#x2F;1.x 的缺点。现在的网页使用很多 HTML、CSS、JavaScript、图片等资源，在 HTTP&#x2F;1.x 中，每个资源必须被显式请求。这会是一个漫长的过程。浏览器先获取 HTML，然后一边解析页面，一边获取更多资源。服务器必须等着浏览器发起每次请求，这就导致网络会经常空闲、未充分利用起来。 为了改善延迟，HTTP&amp;#x2F">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://oss.gonever.com/phpfIPagW5e2106fe20522.svg">
+<meta property="og:image" content="https://oss.gonever.com/phpKnuHzY5e21068863d9d.png">
+<meta property="og:image" content="https://oss.gonever.com/phpvdnzlo5e1fc5f2cef67.png">
+<meta property="article:published_time" content="2020-01-15T12:41:43.000Z">
+<meta property="article:modified_time" content="2023-03-09T06:57:14.000Z">
+<meta property="article:author" content="Chen Gangyang">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content="Golang">
+<meta property="article:tag" content="翻译">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://oss.gonever.com/phpfIPagW5e2106fe20522.svg">
+  
+    <link rel="alternate" href="/atom.xml" title="Castle，专属于自己的领地" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Castle，专属于自己的领地</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">我的沉思、笔记和回忆</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://www.gonever.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-【译】HTTP_2 Server Push" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/01/15/%E3%80%90%E8%AF%91%E3%80%91HTTP_2%20Server%20Push/" class="article-date">
+  <time class="dt-published" datetime="2020-01-15T12:41:43.000Z" itemprop="datePublished">2020-01-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      【译】HTTP/2 Server Push
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h1><p>HTTP&#x2F;2 旨在解决许多 HTTP&#x2F;1.x 的缺点。现在的网页使用很多 HTML、CSS、JavaScript、图片等资源，在 HTTP&#x2F;1.x 中，每个资源必须被显式请求。这会是一个漫长的过程。浏览器先获取 HTML，然后一边解析页面，一边获取更多资源。服务器必须等着浏览器发起每次请求，这就导致网络会经常空闲、未充分利用起来。</p>
+<p>为了改善延迟，HTTP&#x2F;2 引入了 <code>Server Push</code>。<code>Server Push</code> 允许资源在明确被请求之前，由服务器推送这些资源给浏览器。服务器通常知道需要加载哪些额外资源，因此可以在响应初始请求时一起推送这些资源。这让服务器能充分利用剩余空闲带宽来改善页面加载时间。</p>
+<p><img src="https://oss.gonever.com/phpfIPagW5e2106fe20522.svg" alt="serverpush.svg"></p>
+<p>在协议层，<code>HTTP/2 Server Push</code> 由 <code>PUSH_PROMISE</code> 帧发起。 一个 <code>PUSH_PROMISE</code> 表明了服务器预测浏览器将会发起的请求。浏览器一接收了该 <code>PUSH_PROMISE</code>，就会知道服务器将要分发资源。若浏览器之后发现需要这个资源，它就会等着该 <code>Push</code> 完成，而不是发送一个新请求。这就减少了浏览器在网络上花的时间。</p>
+<h1 id="net-x2F-http-包中的-Server-Push"><a href="#net-x2F-http-包中的-Server-Push" class="headerlink" title="net&#x2F;http 包中的 Server Push"></a>net&#x2F;http 包中的 <code>Server Push</code></h1><p>Go 1.8 从 <code>http.Server</code> 中引入了对 <code>Server Push</code> 响应的支持。如果运行的是 HTTP&#x2F;2 的服务器，并且进来的连接使用了 HTTP&#x2F;2 ，这个特性就能用了。在每个 HTTP 的处理程序中，你都可以通过检查 <code>http.ResponseWriter</code> 是否实现了 <code>http.Pusher</code>接口，来判断服务器是否支持 <code>Server Push</code>。</p>
+<p>例如，如果服务器知道渲染页面时需要 <code>app.js</code>，处理程序可以在 <code>http.Pusher</code> 可用时这样初始化一个 <code>Push</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">http.HandleFunc(&quot;/&quot;, func(w http.ResponseWriter, r *http.Request) &#123;</span><br><span class="line">    if pusher, ok := w.(http.Pusher); ok &#123;</span><br><span class="line">        // Push is supported.</span><br><span class="line">        if err := pusher.Push(&quot;/app.js&quot;, nil); err != nil &#123;</span><br><span class="line">            log.Printf(&quot;Failed to push: %v&quot;, err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // ...</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>该 <code>Push</code> 会为 <code>app.js</code> 创建了一个合成请求，把 <code>app.js</code> 合并到 <code>Push_Promise</code> 中，然后将合成请求转发给服务器处理程序，服务器处理程序会生成响应。<code>Push</code> 的第二个参数指定了包含在 <code>Push_PROMISE</code>中的额外 header。 例如，如果 <code>app.js</code> 的响应有 <code>Accept-Encoding</code> 上的不同，那 <code>PUSH_PROMISE</code> 应该包括 <code>Access-Encoding</code> 的值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">http.HandleFunc(&quot;/&quot;, func(w http.ResponseWriter, r *http.Request) &#123;</span><br><span class="line">    if pusher, ok := w.(http.Pusher); ok &#123;</span><br><span class="line">        // Push is supported.</span><br><span class="line">        options := &amp;http.PushOptions&#123;</span><br><span class="line">            Header: http.Header&#123;</span><br><span class="line">                &quot;Accept-Encoding&quot;: r.Header[&quot;Accept-Encoding&quot;],</span><br><span class="line">            &#125;,</span><br><span class="line">        &#125;</span><br><span class="line">        if err := pusher.Push(&quot;/app.js&quot;, options); err != nil &#123;</span><br><span class="line">            log.Printf(&quot;Failed to push: %v&quot;, err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // ...</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>完整示例见：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go get golang.org/x/blog/content/h2push/server</span><br></pre></td></tr></table></figure>
+
+<p>运行服务器，加载 <a target="_blank" rel="noopener" href="https://localhost:8080/">https://localhost:8080</a>，就能在浏览器开发者工具上看到服务器 推送了 <code>app.js</code> 和 <code>style.css</code>。</p>
+<p><img src="https://oss.gonever.com/phpKnuHzY5e21068863d9d.png" alt="networktimeline.png"></p>
+<h1 id="在响应之前-Push"><a href="#在响应之前-Push" class="headerlink" title="在响应之前 Push"></a>在响应之前 <code>Push</code></h1><p>在发送响应之前调用 <code>Push</code> 方法是个好主意，否则可能会意外产生重复响应。例如，假设写入了部分响应：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;link rel=&quot;stylesheet&quot; href=&quot;a.css&quot;&gt;...</span><br></pre></td></tr></table></figure>
+
+<p>然后调用 <code>Push(&quot;a.css&quot;, nil)</code>，浏览器可能会在接收到 <code>PUSH_PROMISE</code> 之前开始解析 HTML。这会导致除了接收到 <code>PUSH_PROMISE</code> ，还会再发起一个 <code>a.css</code> 请求，服务器会生成 2 次 <code>a.css</code>。 在写入响应之前调用 <code>Push</code> 完全避免掉了这种可能。</p>
+<h1 id="什么时候使用-Server-Push？"><a href="#什么时候使用-Server-Push？" class="headerlink" title="什么时候使用 Server Push？"></a>什么时候使用 <code>Server Push</code>？</h1><p>考虑在网络空闲的情况下使用 <code>Server Push</code>。刚给你的 web 应用发送完 HTML？别等了，开始使用 <code>Server Push</code> 推送客户端需要的资源吧。还在使用内联资源（inline-style-sheet）来减小延迟吗？别用了，换成 <code>Server Push</code>吧。重定向是另一个使用 <code>Server Push</code> 的好时机，因为客户端这时候正在往返请求上浪费时间。还有很多可以使用 <code>Server Push</code> 的情形，我们仅仅是做个入门。</p>
+<p>要是一下几点不提一下的话是我们的失职。</p>
+<ol>
+<li><p>只能推送你服务器有权推送的资源，第三方服务器或者 CDN 的资源无法推送。</p>
+</li>
+<li><p>除非确信客户端需要这些资源，否则别推送，不然的话会浪费带宽。要是浏览器已经缓存了这些资源的话，必须要避免重复推送。</p>
+</li>
+<li><p>天真地推送所有资源给页面会让性能更糟，在不能确定的情况下，要慎重。</p>
+</li>
+</ol>
+<p>以下资源做了不错的额外补充：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://calendar.perfplanet.com/2016/http2-push-the-details/">HTTP&#x2F;2 Push: The Details</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.igvita.com/2013/06/12/innovating-with-http-2.0-server-push/">Innovating with HTTP&#x2F;2 Server Push</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/h2o/h2o/issues/421">Cache-Aware Server Push in H2O</a></li>
+<li><a target="_blank" rel="noopener" href="https://developers.google.com/web/fundamentals/performance/prpl-pattern/">The PRPL Pattern</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.google.com/document/d/1K0NykTXBbbbTlv60t5MyJvXjqKGsCVNYHyLEXIxYMv0">Rules of Thumb for HTTP&#x2F;2 Push</a></li>
+<li><a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc7540#section-8.2">Server Push in the HTTP&#x2F;2 spec</a></li>
+</ul>
+<h1 id="尾声"><a href="#尾声" class="headerlink" title="尾声"></a>尾声</h1><p>在 Go 1.8 中，标准库为 <code>HTTP/2 Server Push</code> 提供了一个开箱即用的支持，为优化你的网页应用提供了更多灵活性。</p>
+<p>打开 <a target="_blank" rel="noopener" href="https://http2.golang.org/serverpush">HTTP&#x2F;2 Server Push demo</a> 看一下 <code>Server Push</code> 的实际效果。</p>
+<p><img src="https://oss.gonever.com/phpvdnzlo5e1fc5f2cef67.png" alt="image.png"></p>
+<h1 id="参考资料-amp-说明"><a href="#参考资料-amp-说明" class="headerlink" title="参考资料 &amp; 说明"></a>参考资料 &amp; 说明</h1><p>[ 1 ] 本文翻译自 Go Blog 的 <a target="_blank" rel="noopener" href="https://blog.golang.org/h2push">HTTP&#x2F;2 Server Push</a>。</p>
+<p>[ 2 ] 本文在翻译过程中参考了 <a target="_blank" rel="noopener" href="https://juejin.im/entry/59599fa8f265da6c306518a8">在 Go 中使用 HTTP&#x2F;2 Server Push</a>。该文章源地址在 <a target="_blank" rel="noopener" href="https://www.qichengzx.com/2017/07/02/HTTP2-Server-Push.html">在 Go 中使用 HTTP&#x2F;2 Server Push</a>。</p>
+<p>[ 3 ] 本文在翻译过程中进行了小部分的演绎，请知悉。由于本人水平有限，如有错讹，可以在留言区指出，不胜感激。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2020/01/15/%E3%80%90%E8%AF%91%E3%80%91HTTP_2%20Server%20Push/" data-id="cljcm06u30040hev6c70j9gvc" data-title="【译】HTTP/2 Server Push" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/02/10/%E9%98%BF%E9%87%8C%E4%BA%91%E5%88%86%E6%9E%90%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%BD%BF%E7%94%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          阿里云分析型数据库的使用
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/01/13/%E4%BD%BF%E7%94%A8%20OpenCV%20%E5%92%8C%20FFmpeg%20%E5%A4%84%E7%90%86%E8%A7%86%E9%A2%91%E6%B0%B4%E5%8D%B0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">使用 OpenCV 和 FFmpeg 处理视频水印</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORS/" rel="tag">CORS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeetCode/" rel="tag">LeetCode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Plan/" rel="tag">Plan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%82%9F/" rel="tag">感悟</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" rel="tag">诗词赋</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AC%E8%BD%BD/" rel="tag">转载</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CORS/" style="font-size: 10px;">CORS</a> <a href="/tags/Docker/" style="font-size: 11px;">Docker</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/LeetCode/" style="font-size: 16px;">LeetCode</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/MySQL/" style="font-size: 18px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 12px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 11px;">PHP</a> <a href="/tags/Plan/" style="font-size: 10px;">Plan</a> <a href="/tags/Redis/" style="font-size: 12px;">Redis</a> <a href="/tags/%E6%84%9F%E6%82%9F/" style="font-size: 14px;">感悟</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">技术</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 13px;">服务器</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 10px;">算法</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" style="font-size: 17px;">诗词赋</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">五月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">十二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/01/13/%E4%BD%BF%E7%94%A8%20awk%20%E5%91%BD%E4%BB%A4%E7%AD%9B%E9%80%89%20csv%20%E6%8C%87%E5%AE%9A%E8%A1%8C/">使用 awk 命令筛选 csv 指定行</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/17/linux%20%E6%9B%BF%E6%8D%A2%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2/">linux 替换多行字符串</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/07/%E8%A5%BF%E5%9B%AD%E5%90%9F/">西园吟</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/22/%E5%B0%91%E5%B9%B4%E6%B8%B8/">少年游</a>
+          </li>
+        
+          <li>
+            <a href="/2022/02/10/%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%20tcpdump%20%E7%9A%84%E4%BD%BF%E7%94%A8/">网络抓包工具 tcpdump 的使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Chen Gangyang<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

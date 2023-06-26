@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Castle，专属于自己的领地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Castle，专属于自己的领地">
+<meta property="og:url" content="https://www.gonever.com/page/10/">
+<meta property="og:site_name" content="Castle，专属于自己的领地">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="Chen Gangyang">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Castle，专属于自己的领地" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Castle，专属于自己的领地</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">我的沉思、笔记和回忆</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://www.gonever.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-PHP 导出csv" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2017/01/16/PHP%20%E5%AF%BC%E5%87%BAcsv/" class="article-date">
+  <time class="dt-published" datetime="2017-01-16T07:57:16.000Z" itemprop="datePublished">2017-01-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2017/01/16/PHP%20%E5%AF%BC%E5%87%BAcsv/">PHP 导出csv</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><code>csv</code>，全称<code>Comma-Separated Values</code>，翻译为中文就是“逗号分隔值”（其实分隔符可以是逗号、制表符或者空格）。理解了这一点，便可以很简单的将数据导出为csv。</p>
+<p>表格其实就是二维数组，分为列和行。例如班级表：</p>
+<p>姓名</p>
+<p>年龄</p>
+<p>性别</p>
+<p>小明</p>
+<p>12</p>
+<p>男</p>
+<p>小芳</p>
+<p>11</p>
+<p>女</p>
+<p>转化为csv之后的值为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">姓名, 年龄, 性别</span><br><span class="line">小明, 12, 男</span><br><span class="line">小芳, 11, 女</span><br></pre></td></tr></table></figure>
+
+<p>也就是将”换列”转化为了”,”，将“换行”转化为了“\n”。</p>
+<p>php代码也很简单：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$csv = &quot;&quot;;</span><br><span class="line"></span><br><span class="line">foreach($data as $line)&#123;</span><br><span class="line">    $csv .= join(&quot;,&quot;, $line) . &quot;\n&quot;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$csv = iconv(&quot;utf-8&quot;, &quot;gb2312&quot;, $csv);</span><br><span class="line"></span><br><span class="line">header( &quot;Content-Disposition:  attachment;  filename= &#123;$filename&#125;.csv&quot;);</span><br><span class="line"></span><br><span class="line">echo $csv;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2017/01/16/PHP%20%E5%AF%BC%E5%87%BAcsv/" data-id="cljcm06tn002rhev622leh5kw" data-title="PHP 导出csv" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-PHP 的不为人知的新特性" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/12/29/PHP%20%E7%9A%84%E4%B8%8D%E4%B8%BA%E4%BA%BA%E7%9F%A5%E7%9A%84%E6%96%B0%E7%89%B9%E6%80%A7/" class="article-date">
+  <time class="dt-published" datetime="2016-12-29T05:38:09.000Z" itemprop="datePublished">2016-12-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2016/12/29/PHP%20%E7%9A%84%E4%B8%8D%E4%B8%BA%E4%BA%BA%E7%9F%A5%E7%9A%84%E6%96%B0%E7%89%B9%E6%80%A7/">PHP 的不为人知的新特性</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="php5-3中新增的特性"><a href="#php5-3中新增的特性" class="headerlink" title="php5.3中新增的特性"></a>php5.3中新增的特性</h1><h2 id="静态晚绑定"><a href="#静态晚绑定" class="headerlink" title="静态晚绑定"></a>静态晚绑定</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class A &#123;</span><br><span class="line">    public static function who()&#123;</span><br><span class="line">         echo __CLASS__; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static function test()&#123;</span><br><span class="line">         echo static::who();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">     public static function test2()&#123;</span><br><span class="line">         echo self::who();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class B extends A&#123;</span><br><span class="line">    public static function who()&#123;</span><br><span class="line">       echo __CLASS__; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">A::test();//输出A</span><br><span class="line">A::test2();//输出A</span><br><span class="line"></span><br><span class="line">b::test();//输出B 晚期静态绑定会绑定到调用类</span><br><span class="line">b::test2();//输出A 直接绑定会绑定到方法所在类</span><br></pre></td></tr></table></figure>
+
+<p>晚期静态绑定是使用<code>static</code>代替<code>self</code>，<code>self</code>会指向方法所在类，<code>static</code>会指向后期调用者。</p>
+<h2 id="goto支持"><a href="#goto支持" class="headerlink" title="goto支持"></a>goto支持</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">goto a;</span><br><span class="line">echo &#x27;Foo&#x27;;</span><br><span class="line">a:</span><br><span class="line">echo &#x27;Bar&#x27;;</span><br><span class="line">//输出Bar</span><br></pre></td></tr></table></figure>
+
+<p>当需要跳出多层循环时，必须要增加判断才可以，而goto可以直接跳出循环，与C语言类似。</p>
+<h2 id="三元运算简写形式"><a href="#三元运算简写形式" class="headerlink" title="三元运算简写形式"></a>三元运算简写形式</h2><p>从php5.3开始支持三元运算符<code>?:</code>。例如<code>$a ?: $b</code>，<code>$a</code>为真值返回<code>$a</code>，否则返回<code>$b</code>。其效果等同于<code>$a ? $a : $b</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$a = false;</span><br><span class="line">$a = $a?:1;</span><br><span class="line">echo $a;//输出1</span><br><span class="line">$a = 1220;</span><br><span class="line">$a = $a?:1;</span><br><span class="line">echo $a;//输出1220</span><br></pre></td></tr></table></figure>
+
+<h1 id="php5-6中新增的特性"><a href="#php5-6中新增的特性" class="headerlink" title="php5.6中新增的特性"></a>php5.6中新增的特性</h1><h2 id="const常量可以用表达式定义，const常量可以是数组"><a href="#const常量可以用表达式定义，const常量可以是数组" class="headerlink" title="const常量可以用表达式定义，const常量可以是数组"></a>const常量可以用表达式定义，const常量可以是数组</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const ONE = 1;</span><br><span class="line">const TWO = ONE + 1;//仅可以为常量的结果</span><br><span class="line">const Arr = [1,2];</span><br></pre></td></tr></table></figure>
+
+<h2 id="可以用“…”表示多个参数"><a href="#可以用“…”表示多个参数" class="headerlink" title="可以用“…”表示多个参数"></a>可以用“…”表示多个参数</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function sum(...params)&#123;</span><br><span class="line">   return array_sum(params);</span><br><span class="line">&#125;</span><br><span class="line">sum(1, 2, 9); //12</span><br><span class="line">sum(...[1,2,9]);//12 注意：只能传数字下标数组，不能穿带有键名的数组</span><br></pre></td></tr></table></figure>
+
+<h2 id="可以用“-”表示幂运算"><a href="#可以用“-”表示幂运算" class="headerlink" title="可以用“**”表示幂运算"></a>可以用“**”表示幂运算</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">3 ** 4; //81</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2016/12/29/PHP%20%E7%9A%84%E4%B8%8D%E4%B8%BA%E4%BA%BA%E7%9F%A5%E7%9A%84%E6%96%B0%E7%89%B9%E6%80%A7/" data-id="cljcm06to002thev62dxsb8c8" data-title="PHP 的不为人知的新特性" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-PHP 实现快速排序" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/12/22/PHP%20%E5%AE%9E%E7%8E%B0%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F/" class="article-date">
+  <time class="dt-published" datetime="2016-12-22T01:23:36.000Z" itemprop="datePublished">2016-12-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2016/12/22/PHP%20%E5%AE%9E%E7%8E%B0%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F/">PHP 实现快速排序</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>快速排序的思想是分冶法。</p>
+<p>取数组中间值&#x3D;&gt;遍历数组剩余元素&#x3D;&gt;小于中间值的放左边，大于中间值的放右边&#x3D;&gt;将左右循环如此直至不可再分-&gt;将已排好的合并</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$arr = [11, 17, 29, 63, 45, 97, 12, 45, 34, 91, 64, 82, 76, 22, 77, 37, 85];</span><br><span class="line"></span><br><span class="line">function quickSort($arr)</span><br><span class="line">&#123;</span><br><span class="line">    if (count($arr) &lt;= 1) return $arr;</span><br><span class="line">    $index = (int)floor(count($arr) / 2);</span><br><span class="line">    $value = $arr[$index];</span><br><span class="line">    array_splice($arr, $index, 1);</span><br><span class="line">    $left = $right = [];</span><br><span class="line">    for ($i = 0; $i &lt; count($arr); $i++) &#123;</span><br><span class="line">        if ($arr[$i] &lt; $value) &#123;</span><br><span class="line">            array_push($left, $arr[$i]);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            array_push($right, $arr[$i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    $left = quickSort($left);</span><br><span class="line">    $right = quickSort($right);</span><br><span class="line">    array_push($left, $value);</span><br><span class="line">    return array_merge($left, $right);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">echo join(&quot;, &quot;, quickSort($arr));</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2016/12/22/PHP%20%E5%AE%9E%E7%8E%B0%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F/" data-id="cljcm06tm002ohev6beq83qfx" data-title="PHP 实现快速排序" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-【转载】网页字体排印指南" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/12/21/%E3%80%90%E8%BD%AC%E8%BD%BD%E3%80%91%E7%BD%91%E9%A1%B5%E5%AD%97%E4%BD%93%E6%8E%92%E5%8D%B0%E6%8C%87%E5%8D%97/" class="article-date">
+  <time class="dt-published" datetime="2016-12-21T01:12:20.000Z" itemprop="datePublished">2016-12-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2016/12/21/%E3%80%90%E8%BD%AC%E8%BD%BD%E3%80%91%E7%BD%91%E9%A1%B5%E5%AD%97%E4%BD%93%E6%8E%92%E5%8D%B0%E6%8C%87%E5%8D%97/">【转载】网页字体排印指南</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>排版者应像手艺人一样遵循一条原则：做好自己的工作并隐于无形</strong></p>
+<hr>
+<h2 id="关于"><a href="#关于" class="headerlink" title="关于"></a>关于</h2><p>网页上百分之九十五的信息是「文字」，大多数人浏览网页的状态就是<strong>阅读</strong>，也就是你目前正在做的事情. 因此作为一名前端工程师，让文字更好地在网页显示，是一件极其重要的工作.</p>
+<p>字体排印有两种形式，一种称为 Creative Typography，另一种称为 Technical Typography. 前者倾向于<strong>设计</strong>，比如选择的字体表达的情绪，字间距的设定带来的视觉影响. 而后者更倾向于<strong>技术</strong>，以一套有迹可循的规则进行应用，比如实现「齐头尾」如何避免中西文混排造成的字间距拉伸，以及选择什么样的 <code>font-family</code> 可以在多平台上最优显示等等.</p>
+<p>本文主要围绕 Technical Typography 进行讨论.</p>
+<h2 id="选择字体"><a href="#选择字体" class="headerlink" title="选择字体"></a>选择字体</h2><p>在 Web 上应用字体，是一门技术，同时也是一门艺术. 由于计算机历史发展的原因，西文有大量优秀的字体可供选择，可对于中文来说就是一项挑战. 主流操作系统提供的本地中文字体极少，另一方面中文字体组成的特殊性，其体积过于庞大，无法良好地使用 webfont. 所以编写健壮的 <code>font-family</code> 是一件需要深思熟虑的事情.</p>
+<p>以下列出各种平台下合适的中西文字体：</p>
+<p>Mac</p>
+<p>Windows</p>
+<p>Linux</p>
+<p>冬青黑体 Hiragino Sans GB</p>
+<p>中易宋体 SimSun</p>
+<p>文泉驿微米黑WenQuanYi Microhei</p>
+<p>黑体-简（华文黑体）Heiti SC (STHeiti)</p>
+<p>微软雅黑Microsoft YaHei</p>
+<p>宋体-简（华文宋体）Songti SC (STSong)</p>
+<p>iOS</p>
+<p>Android</p>
+<p>黑体-简（华文黑体）Heiti SC (STHeiti)</p>
+<p>思源黑体Noto Sans CJK SC</p>
+<p>Droid Sans Fallback</p>
+<p>无衬线</p>
+<p>衬线</p>
+<p>等宽</p>
+<p>Lucida Grande</p>
+<p>Georgia</p>
+<p>Menlo</p>
+<p>Helvetica Neue</p>
+<p>Times New Roman</p>
+<p>Courier</p>
+<p>Arial</p>
+<p>抛开宋&#x2F;明体长时间作为系统默认字体，所产生的审美疲劳，宋&#x2F;明体相比黑体是更合适作为内文字体. 大多的宋&#x2F;明体针对内文设计，横细直粗，造型方正，笔画在小字号的情况下，不会糊在一起，给人一种素雅的感觉. 而黑体笔画粗壮有力，引人注目，更适合作为标题使用.</p>
+<p>但大部分人已经习惯在网页上阅读黑体，以及宋&#x2F;明体在字重过大的情况下，显示效果还是不太理想. 所以内文默认提供黑体，可选择性的切换宋&#x2F;明体.</p>
+<p>按照以上表格提供的中文字体，为此我为内文和标题编写两套 <code>font-family</code>. 关于这两套 <code>font-family</code> 的选择和排序，等空闲时，再写一篇文章谈下.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">p &#123; font-family: &quot;Georgia&quot;, &quot;Times New Roman&quot;, &quot;Songti SC&quot;, &quot;SimSun&quot;, serif; &#125;</span><br><span class="line">h1, h2, h3, h4, h5, h6 &#123; font-family: &quot;Lucida Grande&quot;, &quot;Helvetica Neue&quot;, &quot;Arial&quot;, &quot;Hiragino Sans GB&quot;, &quot;Noto Sans CJK SC&quot;, &quot;Heiti SC&quot;, &quot;Microsoft YaHei&quot;, &quot;WenQuanYi Microhei&quot;, sans-serif;&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="垂直的旋律"><a href="#垂直的旋律" class="headerlink" title="垂直的旋律"></a>垂直的旋律</h2><h3 id="音阶"><a href="#音阶" class="headerlink" title="音阶"></a>音阶</h3><p>Robert Bringhurst 在《The Elements of Typographic Style》谈到字号大小之间的比例，形似于音乐中的音阶. 作曲时以某个特定的音阶为基础，才会形成特定的风格. 字号的排版同样如此，有规律的字号变化，才会形成特定的排版风格.</p>
+<p>将内文以 16px 作为字号<br>标题 <code>h1, h2, h3, h4, h5, h6</code> 以 16px 作为字号基础，按同比例的递减</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">p  &#123; font-size: 16px; &#125;</span><br><span class="line">h1 &#123; font-size: 2em; &#125;</span><br><span class="line">h2 &#123; font-size: 1.8em; &#125;</span><br><span class="line">h3 &#123; font-size: 1.6em; &#125;</span><br><span class="line">h4 &#123; font-size: 1.4em; &#125;</span><br><span class="line">h5, h6 &#123; font-size: 1.2em; &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="节拍"><a href="#节拍" class="headerlink" title="节拍"></a>节拍</h3><p>此外，Robert Bringhurst 还谈到版式中的空间就像音乐中的时间(Space in typography is like time in music)，言下之意，把握间距（行高）就如把握节拍. 节拍是对时间的分割，倘若抢拍便失去节奏. 文字的间距（行高）亦是对空间的分割，不一致间距（行高）比例，便会失去「垂直的旋律」.</p>
+<p>将内文以 1.7em 作为行高<br>标题 <code>h1, h2, h3, h4, h5, h6</code> 以 1.5em 作为行高.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">p &#123; line-height: 1.7em; &#125;</span><br><span class="line">h1, h2, h3, h4, h5, h6 &#123; line-height: 1.5em; &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="段首缩进-VS-段落间距"><a href="#段首缩进-VS-段落间距" class="headerlink" title="段首缩进 VS 段落间距"></a>段首缩进 VS 段落间距</h2><p>段落分隔对于中文排版而言也是特别重要，主要以「段首缩进」和「段落间距」两种方式表现，它们的唯一目的就是将段落分隔.</p>
+<p>「段首缩进」主要用于印刷书籍，节省纵向空间，保持文本连贯，但一般在网页上的阅读速度较快，会使文字过于密集产生压力. 相反「段落间距」主要用于网页，充分利用网页无限的纵向空间，保障文本块的整洁，同时给予长篇阅读休息的间隙. 所以一般网页排版，会考虑选择「段落间距」，可以设置以下属性实现「段落间距」.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">p &#123; margin-bottom: 1.7em; &#125;</span><br><span class="line">h1, h2, h3, h4, h5, h6 &#123;</span><br><span class="line">  margin-top: .7em;</span><br><span class="line">  margin-bottom: 0.2em;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="对齐"><a href="#对齐" class="headerlink" title="对齐"></a>对齐</h2><p>汉字的方块性质构成了汉字独有的艺术美感，使其具有工整的特点，从而显现出中文排版的重要原则：所有元素都是正方体. 但从二十世纪开始使用标点后，以及中西文混排的情况越来越多，为了保证「禁则处理」和「齐头尾」实现，可能需要在不同条件下进行适当的断词处理.</p>
+<blockquote>
+<p>「禁則」是来自日语的排版术语，主要指的就是禁止一些标点等字符出现在行首或行尾的规则，大致相当于汉语常说的「避头尾」.</p>
+</blockquote>
+<p>可以设置以下属性实现「齐头尾」，其中<code>inter-ideographic</code>意思是「通过调整单词和字符之间的留白来实现两端对齐」.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">p &#123;</span><br><span class="line">text-align: justify;</span><br><span class="line">text-justify: inter-ideographic;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但这样的「齐头尾」并不是完美的，主要由于技术遗留原因，在 Windows 和 Linux 上的 webkit 浏览器并没有实现 <code>inter-ideographic</code> 导致中西文混排的时候，容易出现过度拉伸字间距的情况.</p>
+<p><img src="https://www.qianduan.net/img/2015/01/justify.png" alt="justify"></p>
+<p>左侧: inter-ideographic | 右侧: break-all</p>
+<p>为此有一种不优雅的解决方案，在极易出现字间距拉伸的小尺寸屏幕（手机）上使用「断词处理」，避免字间距拉伸，可是这样也带来「无视避头尾规则」和「西文单词断词」的坏毛病. 这是用一种不优雅解决另一种不优雅，按需抉择吧.</p>
+<p>可以设置以下属性进行「断词处理」</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">p &#123; word-break: break-all; &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="未作说明…"><a href="#未作说明…" class="headerlink" title="未作说明…"></a>未作说明…</h2><ul>
+<li>Kerning</li>
+<li>有序&#x2F;无序列表</li>
+<li>「.」作为句号相比「。」的优势</li>
+</ul>
+<p>参见：<br><a target="_blank" rel="noopener" href="http://www.smashingmagazine.com/2011/03/14/technical-web-typography-guidelines-and-techniques/#tt-face">Technical Web Typography: Guidelines and Techniques</a><br><a target="_blank" rel="noopener" href="https://ia.net/blog/the-web-is-all-about-typography-period">Web Design is 95% Typography</a><br><a target="_blank" rel="noopener" href="http://book.douban.com/subject/1466932/">The Elements of Typographic Style</a><br><a target="_blank" rel="noopener" href="https://medium.com/@bobtung/best-practice-in-chinese-layout-f933aff1728f">Best Practices for Chinese Layout</a><br><a target="_blank" rel="noopener" href="http://blog.justfont.com/">JUSTFONT BLOG</a><br><a target="_blank" rel="noopener" href="https://www.google.com/">Google</a><br><a target="_blank" rel="noopener" href="http://www.wikipedia.org/">维基百科</a><br><a target="_blank" rel="noopener" href="http://www.zhihu.com/">知乎</a></p>
+<hr>
+<p>制作 | <a target="_blank" rel="noopener" href="http://aaaaaashu.me/">树</a></p>
+<p>音乐 | <a target="_blank" rel="noopener" href="http://hynuza.com/">hynuza</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2016/12/21/%E3%80%90%E8%BD%AC%E8%BD%BD%E3%80%91%E7%BD%91%E9%A1%B5%E5%AD%97%E4%BD%93%E6%8E%92%E5%8D%B0%E6%8C%87%E5%8D%97/" data-id="cljcm06u50045hev6g3ecd7c0" data-title="【转载】网页字体排印指南" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%BD%AC%E8%BD%BD/" rel="tag">转载</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-LeetCode: 删除重复的邮箱地址" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/12/20/LeetCode:%20%E5%88%A0%E9%99%A4%E9%87%8D%E5%A4%8D%E7%9A%84%E9%82%AE%E7%AE%B1%E5%9C%B0%E5%9D%80/" class="article-date">
+  <time class="dt-published" datetime="2016-12-20T11:31:50.000Z" itemprop="datePublished">2016-12-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2016/12/20/LeetCode:%20%E5%88%A0%E9%99%A4%E9%87%8D%E5%A4%8D%E7%9A%84%E9%82%AE%E7%AE%B1%E5%9C%B0%E5%9D%80/">LeetCode: 删除重复的邮箱地址</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>Write a SQL query to delete all duplicate email entries in a table named Person, keeping only unique emails based on its smallest Id.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+----+------------------+</span><br><span class="line">| Id | Email            |</span><br><span class="line">+----+------------------+</span><br><span class="line">| 1  | john@example.com |</span><br><span class="line">| 2  | bob@example.com  |</span><br><span class="line">| 3  | john@example.com |</span><br><span class="line">+----+------------------+</span><br><span class="line">Id is the primary key column for this table.</span><br></pre></td></tr></table></figure>
+
+<p>For example, after running your query, the above Person table should have the following rows:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+----+------------------+</span><br><span class="line">| Id | Email            |</span><br><span class="line">+----+------------------+</span><br><span class="line">| 1  | john@example.com |</span><br><span class="line">| 2  | bob@example.com  |</span><br><span class="line">+----+------------------+</span><br></pre></td></tr></table></figure>
+
+<p>翻译</p>
+<p>从<code>Person</code>表中删除所有重复的邮箱，仅保留 id 最小的邮箱。</p>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">DELETE</span><br><span class="line">FROM</span><br><span class="line">    Person</span><br><span class="line">WHERE</span><br><span class="line">    id NOT IN (</span><br><span class="line">        SELECT</span><br><span class="line">            t.id</span><br><span class="line">        FROM</span><br><span class="line">            (</span><br><span class="line">                SELECT</span><br><span class="line">                    `Email`,</span><br><span class="line">                    min(id) AS id</span><br><span class="line">                FROM</span><br><span class="line">                    Person</span><br><span class="line">                GROUP BY</span><br><span class="line">                    `Email`</span><br><span class="line">            ) t</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2016/12/20/LeetCode:%20%E5%88%A0%E9%99%A4%E9%87%8D%E5%A4%8D%E7%9A%84%E9%82%AE%E7%AE%B1%E5%9C%B0%E5%9D%80/" data-id="cljcm22e60000tiv67hod8tpv" data-title="LeetCode: 删除重复的邮箱地址" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LeetCode/" rel="tag">LeetCode</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-LeetCode：排列数以获得最大值" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/12/20/LeetCode%EF%BC%9A%E6%8E%92%E5%88%97%E6%95%B0%E4%BB%A5%E8%8E%B7%E5%BE%97%E6%9C%80%E5%A4%A7%E5%80%BC/" class="article-date">
+  <time class="dt-published" datetime="2016-12-20T09:16:03.000Z" itemprop="datePublished">2016-12-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2016/12/20/LeetCode%EF%BC%9A%E6%8E%92%E5%88%97%E6%95%B0%E4%BB%A5%E8%8E%B7%E5%BE%97%E6%9C%80%E5%A4%A7%E5%80%BC/">LeetCode：排列数以获得最大值</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><blockquote>
+<p>Given a list of non negative integers, arrange them such that they form the largest number.</p>
+<p>For example, given <code>[3, 30, 34, 5, 9]</code>, the largest formed number is <code>9534330</code>.</p>
+<p>Note: The result may be very large, so you need to return a string instead of an integer.</p>
+</blockquote>
+<p>翻译：</p>
+<blockquote>
+<p>有一组非负整数，排列他们来获得一个最大的数。</p>
+<p>例如，如果给了<code>[3, 30, 34, 5, 9]</code>，那最大的数就是<code>9534330</code>。</p>
+<p>注意： 结果可能非常大，所以需要返回一个字符串(string)类型的数字而不是整型(integer)的。</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2016/12/20/LeetCode%EF%BC%9A%E6%8E%92%E5%88%97%E6%95%B0%E4%BB%A5%E8%8E%B7%E5%BE%97%E6%9C%80%E5%A4%A7%E5%80%BC/" data-id="cljcm06sw0018hev6gw7xh4zg" data-title="LeetCode：排列数以获得最大值" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LeetCode/" rel="tag">LeetCode</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-LeetCode：楼梯问题" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/12/20/LeetCode%EF%BC%9A%E6%A5%BC%E6%A2%AF%E9%97%AE%E9%A2%98/" class="article-date">
+  <time class="dt-published" datetime="2016-12-20T08:56:00.000Z" itemprop="datePublished">2016-12-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2016/12/20/LeetCode%EF%BC%9A%E6%A5%BC%E6%A2%AF%E9%97%AE%E9%A2%98/">LeetCode：楼梯问题</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><blockquote>
+<p>You are climbing a stair case. It takes n steps to reach to the top.</p>
+<p>Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?</p>
+</blockquote>
+<p>翻译</p>
+<blockquote>
+<p>假设有一个n层的楼梯，每次你可以走1到2层。<br>有多少不同的方法可以走上去？</p>
+</blockquote>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>第n层只可以从第n-1层走1层或者n-2层走2层到达。因此第n层的总方法数是第n-1层和n-2层之和。抽象后此问题成为了一个斐波那契数列问题。</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>递归解法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public static int climbStairs(long n) &#123;</span><br><span class="line">        if (n == 0) return 0;</span><br><span class="line">        if (n == 1) return 1;</span><br><span class="line">        if (n == 2) return 2;</span><br><span class="line">        return climbStairs(n - 1) + climbStairs(n - 2);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>非递归解法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public static int climbStairs(long n) &#123;</span><br><span class="line">        if (n == 0) return 0;</span><br><span class="line">        if (n == 1) return 1;</span><br><span class="line">        if (n == 2) return 2;</span><br><span class="line">        int all = 0, past = 2, pastTwo = 1;</span><br><span class="line">        int i = 3;</span><br><span class="line">        do&#123;</span><br><span class="line">            all = past + pastTwo;</span><br><span class="line">            pastTwo = past;</span><br><span class="line">            past = all;</span><br><span class="line">            i++;</span><br><span class="line">        &#125;while (i &lt;= n);</span><br><span class="line">        return all;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2016/12/20/LeetCode%EF%BC%9A%E6%A5%BC%E6%A2%AF%E9%97%AE%E9%A2%98/" data-id="cljcm06sx001bhev6hdze9ik8" data-title="LeetCode：楼梯问题" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LeetCode/" rel="tag">LeetCode</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-通过 Apache 的反向代理实现多用途服务器" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/12/20/%E9%80%9A%E8%BF%87%20Apache%20%E7%9A%84%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%94%A8%E9%80%94%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="article-date">
+  <time class="dt-published" datetime="2016-12-20T07:27:24.000Z" itemprop="datePublished">2016-12-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2016/12/20/%E9%80%9A%E8%BF%87%20Apache%20%E7%9A%84%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%94%A8%E9%80%94%E6%9C%8D%E5%8A%A1%E5%99%A8/">通过 Apache 的反向代理实现多用途服务器</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="遇到问题"><a href="#遇到问题" class="headerlink" title="遇到问题"></a>遇到问题</h1><p>最近一直有个问题困惑着我，apache、nodejs、tomcat不能同时在服务器80端口运行，对域名进行设置时使用ip:port又不能得到期望的结果（结果一直是以一个iframe的形式），因此就在segmentFault上发问：<a target="_blank" rel="noopener" href="https://segmentfault.com/q/1010000004645718">同一台服务器运行多个http服务如何实现？</a>之后得到了数位大神的回答，大意就是采用反向代理来实现。因此百度了一些文章，也看了看<a target="_blank" rel="noopener" href="http://www.php100.com/manual/apache2/mod/mod_proxy.html">apache的手册</a>，大概解决了这个问题。</p>
+<h1 id="apache的思路"><a href="#apache的思路" class="headerlink" title="apache的思路"></a>apache的思路</h1><p>apache的思路应该是将服务和参数转发给真正的服务器，然后从服务器拿到结果返回给浏览器，思路和以前的模拟登录获取结果有点相似，不过这里apache都已经做好了，只需要配置好就可以了。</p>
+<h1 id="apache的域名和代理配置"><a href="#apache的域名和代理配置" class="headerlink" title="apache的域名和代理配置"></a>apache的域名和代理配置</h1><p>首先是域名配置，还是和以前的vhosts配置一样</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ServerName www.eg.com</span><br></pre></td></tr></table></figure>
+
+<p>我觉得要是做整个域名的转发这样就行了，接下来添加配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ServerName www.eg.com</span><br><span class="line">    Order deny,allow</span><br><span class="line">    Allow from all</span><br><span class="line">ProxyPass / http://127.0.0.1:8080/</span><br><span class="line">ProxyPassReverse / http://127.0.0.1:8080/</span><br></pre></td></tr></table></figure>
+
+<p>这样就将<a target="_blank" rel="noopener" href="http://www.eg.com/">www.eg.com</a>的请求转发到了8080端口。</p>
+<p>我用nodejs启动了一个express应用，当然，只不过是输出了一句“hello world”。</p>
+<p><img src="https://segmentfault.com/img/bVvjyo" alt="clipboard.png"></p>
+<p>然后在浏览器中输入<a target="_blank" rel="noopener" href="http://www.eg.com,/">www.eg.com,</a>就会顺利的出现“hello world”了。</p>
+<h1 id="其他事项"><a href="#其他事项" class="headerlink" title="其他事项"></a>其他事项</h1><ul>
+<li><p>需要开启apache代理的拓展</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LoadModule proxy modules/proxy.so</span><br><span class="line">LoadModule proxy_connect modules/proxy_connect.so</span><br><span class="line">LoadModule proxy_http modules/proxy_http.so</span><br><span class="line">LoadModule proxy_html modules/proxy_html.so</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>需要设置hosts（windows下位置在c:&#x2F;windows&#x2F;system32&#x2F;drivers&#x2F;etc&#x2F;hosts，linux下在&#x2F;etc&#x2F;hosts下）。</p>
+</li>
+<li><p>经过我的测试，apache对apache自身的其他端口的代理和对nodejs的代理是正常工作的。</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2016/12/20/%E9%80%9A%E8%BF%87%20Apache%20%E7%9A%84%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%94%A8%E9%80%94%E6%9C%8D%E5%8A%A1%E5%99%A8/" data-id="cljcm06v4006jhev6a4vj2hdi" data-title="通过 Apache 的反向代理实现多用途服务器" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-Angular使用笔记（Angular1）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/12/14/Angular%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0%EF%BC%88Angular1%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2016-12-13T22:08:58.000Z" itemprop="datePublished">2016-12-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2016/12/14/Angular%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0%EF%BC%88Angular1%EF%BC%89/">Angular使用笔记（Angular1）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h1><p>Angular的核心思想是<code>双向数据绑定</code>和<code>依赖注入</code>。<code>双向数据绑定</code>使文档以数据驱动，而不是以DOM驱动；</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2016/12/14/Angular%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0%EF%BC%88Angular1%EF%BC%89/" data-id="cljcm06s70005hev6204u9j6p" data-title="Angular使用笔记（Angular1）" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-doubt" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/12/08/doubt/" class="article-date">
+  <time class="dt-published" datetime="2016-12-08T01:50:16.000Z" itemprop="datePublished">2016-12-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2016/12/08/doubt/">doubt</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>I am here, Shanghai, the biggest city in China.</p>
+<p>I am so so so little, I cannot make any changes for this city.</p>
+<p>I come, then I leave, nothing would be left here, just like a life.</p>
+<p>Quarrel is meaningless, this is the actual status which I live with.</p>
+<p>Get up, work and sleep, day by day.</p>
+<p>I have no aim, and I do not wanna improve myself.</p>
+<p>I read news, glance over the bbses and play games, just like a mid-life man.</p>
+<p>It’s sunny today, but I have no interest to go out to have a breath of fresh air.</p>
+<p>Actually, I have keey away from outside for a long time.</p>
+<p>Do I just wait to die to live the life ?  </p>
+<p>Dobut.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2016/12/08/doubt/" data-id="cljcm06tu003bhev6duo126jz" data-title="doubt" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%84%9F%E6%82%9F/" rel="tag">感悟</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/page/9/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/11/">下一页 &raquo;</a>
+  </nav>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORS/" rel="tag">CORS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeetCode/" rel="tag">LeetCode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Plan/" rel="tag">Plan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%82%9F/" rel="tag">感悟</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" rel="tag">诗词赋</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AC%E8%BD%BD/" rel="tag">转载</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CORS/" style="font-size: 10px;">CORS</a> <a href="/tags/Docker/" style="font-size: 11px;">Docker</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/LeetCode/" style="font-size: 16px;">LeetCode</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/MySQL/" style="font-size: 18px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 12px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 11px;">PHP</a> <a href="/tags/Plan/" style="font-size: 10px;">Plan</a> <a href="/tags/Redis/" style="font-size: 12px;">Redis</a> <a href="/tags/%E6%84%9F%E6%82%9F/" style="font-size: 14px;">感悟</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">技术</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 13px;">服务器</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 10px;">算法</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" style="font-size: 17px;">诗词赋</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">五月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">十二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/01/13/%E4%BD%BF%E7%94%A8%20awk%20%E5%91%BD%E4%BB%A4%E7%AD%9B%E9%80%89%20csv%20%E6%8C%87%E5%AE%9A%E8%A1%8C/">使用 awk 命令筛选 csv 指定行</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/17/linux%20%E6%9B%BF%E6%8D%A2%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2/">linux 替换多行字符串</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/07/%E8%A5%BF%E5%9B%AD%E5%90%9F/">西园吟</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/22/%E5%B0%91%E5%B9%B4%E6%B8%B8/">少年游</a>
+          </li>
+        
+          <li>
+            <a href="/2022/02/10/%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%20tcpdump%20%E7%9A%84%E4%BD%BF%E7%94%A8/">网络抓包工具 tcpdump 的使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Chen Gangyang<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

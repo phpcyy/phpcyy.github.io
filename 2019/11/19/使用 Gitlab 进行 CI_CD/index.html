@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>使用 Gitlab 进行 CI/CD | Castle，专属于自己的领地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="公司刚刚开始创业，因为团队人数较少，没有运维来处理 CI&#x2F;CD ，之前是我在 Makefile 中定义了发布命令。最近趁闲暇之际，花了点时间来搭建了使用 Gitlab 的 Pipeline 来进行 CI&#x2F;CD。 Gitlab CI&#x2F;CD 的几个概念RunnerRunner 是定义在 .gitlab-ci.yml 中的脚本的运行者。 在运行 Job 或者 Pipelin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 Gitlab 进行 CI&#x2F;CD">
+<meta property="og:url" content="https://www.gonever.com/2019/11/19/%E4%BD%BF%E7%94%A8%20Gitlab%20%E8%BF%9B%E8%A1%8C%20CI_CD/">
+<meta property="og:site_name" content="Castle，专属于自己的领地">
+<meta property="og:description" content="公司刚刚开始创业，因为团队人数较少，没有运维来处理 CI&#x2F;CD ，之前是我在 Makefile 中定义了发布命令。最近趁闲暇之际，花了点时间来搭建了使用 Gitlab 的 Pipeline 来进行 CI&#x2F;CD。 Gitlab CI&#x2F;CD 的几个概念RunnerRunner 是定义在 .gitlab-ci.yml 中的脚本的运行者。 在运行 Job 或者 Pipelin">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-11-19T10:46:05.000Z">
+<meta property="article:modified_time" content="2023-03-15T18:06:26.000Z">
+<meta property="article:author" content="Chen Gangyang">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content="Git">
+<meta property="article:tag" content="服务器">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Castle，专属于自己的领地" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Castle，专属于自己的领地</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">我的沉思、笔记和回忆</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://www.gonever.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-使用 Gitlab 进行 CI_CD" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/11/19/%E4%BD%BF%E7%94%A8%20Gitlab%20%E8%BF%9B%E8%A1%8C%20CI_CD/" class="article-date">
+  <time class="dt-published" datetime="2019-11-19T10:46:05.000Z" itemprop="datePublished">2019-11-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      使用 Gitlab 进行 CI/CD
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>公司刚刚开始创业，因为团队人数较少，没有运维来处理 CI&#x2F;CD ，之前是我在 Makefile 中定义了发布命令。最近趁闲暇之际，花了点时间来搭建了使用 Gitlab 的 Pipeline 来进行 CI&#x2F;CD。</p>
+<h2 id="Gitlab-CI-x2F-CD-的几个概念"><a href="#Gitlab-CI-x2F-CD-的几个概念" class="headerlink" title="Gitlab CI&#x2F;CD 的几个概念"></a>Gitlab CI&#x2F;CD 的几个概念</h2><h3 id="Runner"><a href="#Runner" class="headerlink" title="Runner"></a>Runner</h3><p><code>Runner</code> 是定义在 <code>.gitlab-ci.yml</code> 中的脚本的运行者。</p>
+<p>在运行 Job 或者 Pipeline 时，Gitlab 会根据 <code>tag</code> 找到对应的 runner 执行相应的命令。如果找不到对应的 <code>runner</code>，该 Job 就会进入阻塞状态。</p>
+<p>Runner 需要在容器或者主机上安装 <code>gitlab-runner</code>，然后根据项目或者项目组的 <code>token</code> 进行注册。</p>
+<h3 id="Stages"><a href="#Stages" class="headerlink" title="Stages"></a>Stages</h3><p><code>Stages</code> 定义了 Gitlab 执行的阶段。执行时 Gitlab 会依次执行 stages 下的各个 stage。</p>
+<h3 id="Enviorments"><a href="#Enviorments" class="headerlink" title="Enviorments"></a>Enviorments</h3><p><code>Enviorment</code> 可以定义不同的环境，例如 <code>debug</code>, <code>qa</code>, <code>product</code> 等，在 <code>Operations/Environments</code> 可以快速根据不同的环境查看 CI&#x2F;CD 记录。</p>
+<h3 id="Tags"><a href="#Tags" class="headerlink" title="Tags"></a>Tags</h3><p>Tags 定义了 gitlab-runner 的 Tag。默认情况下只有 Job 定义的 Tag 与 Runner 的 Tag 相匹配，该 Runner 才会执行。也就是说 Job 执行时会找到所有匹配该 Job 下 Tags 的 Runner 并执行。</p>
+<h3 id="Job"><a href="#Job" class="headerlink" title="Job"></a>Job</h3><p>Job 定义了一个任务，当发生构建时，Job 找到匹配的 Runner，并执行 Job 下定义的 script。</p>
+<h3 id="Pipeline"><a href="#Pipeline" class="headerlink" title="Pipeline"></a>Pipeline</h3><p>Pipeline 定义了一组 Job，通过 stages 的各个 stage 先找到对应的 Job，再通过 Job 下的 tags 找到对应的 runner，然后交由 runner 执行 Job 下的 script，这样顺序执行下去，一个流水线作业便完成了。</p>
+<h2 id="Gitlab-CI-x2F-CD-的过程"><a href="#Gitlab-CI-x2F-CD-的过程" class="headerlink" title="Gitlab CI&#x2F;CD 的过程"></a>Gitlab CI&#x2F;CD 的过程</h2><h3 id="1-注册Runner。"><a href="#1-注册Runner。" class="headerlink" title="1. 注册Runner。"></a>1. 注册Runner。</h3><p>首先，安装 Runner。</p>
+<p>在 linux 下执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo curl -L --output /usr/local/bin/gitlab-runner https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64</span><br><span class="line">sudo chmod +x /usr/local/bin/gitlab-runner</span><br><span class="line">sudo useradd --comment &#x27;GitLab Runner&#x27; --create-home gitlab-runner --shell /bin/bash #具体的用户名可以根据自己需求修改</span><br><span class="line">sudo gitlab-runner install --user=gitlab-runner --working-directory=/home/gitlab-runner</span><br><span class="line">sudo gitlab-runner start</span><br></pre></td></tr></table></figure>
+
+<p>来安装 gitlab-runner（其他系统参考 <a target="_blank" rel="noopener" href="https://docs.gitlab.com/runner/install/">Install GitLab Runner</a>）。</p>
+<p>然后执行注册。</p>
+<p>在 settings&#x2F;ci_cd 下的 Runner 中查看相关信息。</p>
+<p>执行 <code>sudo gitlab-runner register</code> 之后填写相应的信息完成注册。</p>
+<p>注册完成后可以在该页面看到绿色的 Runner正在运行中。</p>
+<h3 id="2-编辑-gitlab-ci-yml"><a href="#2-编辑-gitlab-ci-yml" class="headerlink" title="2. 编辑 gitlab-ci.yml"></a>2. 编辑 gitlab-ci.yml</h3><p>例如我的 golang 项目 qa 环境的自动发布流程。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">before_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">export</span> <span class="string">GOFLAGS=-mod=vendor</span></span><br><span class="line"><span class="attr">stages:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">test</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">build</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">deploy</span></span><br><span class="line"><span class="attr">format:</span></span><br><span class="line">    <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">    <span class="attr">script:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">go</span> <span class="string">vet</span> <span class="string">$(go</span> <span class="string">list</span> <span class="string">./...)</span></span><br><span class="line">    <span class="attr">tags:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">qa</span></span><br><span class="line"><span class="attr">compile:</span></span><br><span class="line">    <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">    <span class="attr">script:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">make</span> <span class="string">build</span></span><br><span class="line">    <span class="attr">tags:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">qa</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">    <span class="attr">stage:</span> <span class="string">deploy</span></span><br><span class="line">    <span class="attr">script:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">make</span> <span class="string">restart</span></span><br><span class="line">    <span class="attr">tags:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">qa</span></span><br><span class="line">    <span class="attr">when:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">qa</span></span><br><span class="line">    <span class="attr">only:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">develop</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-执行构建"><a href="#3-执行构建" class="headerlink" title="3. 执行构建"></a>3. 执行构建</h3><p>将上边的文件提交到 gitlab 的 develop 分支，在默认的设置下会自动执行 <code>format</code>, <code>compile</code>, <code>deploy</code> 三个 Job。如此，一次构建便完成了。</p>
+<p>如果需要关闭自动构建，可以把 when 下的 always 修改为 manual，这样就可以手动发布了。在 CI&#x2F;CD &#x2F; Pipelines 下点击 <code>Run Pipeline</code> 来手动执行构建。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>其实 Gitlab 的 CI&#x2F;CD 还是比较容易理解的，我们更需要的是在使用 CI&#x2F;CD 之前对 linux 比较熟稔、对自己项目的构建过程了然于心。如此，经过简单的学习便可以快速开始使用 Gitlab 的 CI&#x2F;CD 进行构建，免去不规范的手动执行了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.gonever.com/2019/11/19/%E4%BD%BF%E7%94%A8%20Gitlab%20%E8%BF%9B%E8%A1%8C%20CI_CD/" data-id="cljcm06uc004khev62ck44sk4" data-title="使用 Gitlab 进行 CI/CD" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/11/20/%E7%94%B1%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E6%95%B0%E6%98%AF%E4%B8%8D%E6%98%AF%202%E3%80%813%E3%80%814%20%E7%9A%84%E5%B9%82%E5%BC%95%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          由判断一个数是不是 2、3、4 的幂引发的思考
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/10/22/Pson,%20%E4%B8%80%E4%B8%AA%E5%9C%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%AD%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F%E5%8F%8B%E5%A5%BD%20Json%20%E7%9A%84%E5%B7%A5%E5%85%B7/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">Pson, 一个在命令行中输出格式友好 Json 的工具</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORS/" rel="tag">CORS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeetCode/" rel="tag">LeetCode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Plan/" rel="tag">Plan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%82%9F/" rel="tag">感悟</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" rel="tag">诗词赋</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AC%E8%BD%BD/" rel="tag">转载</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CORS/" style="font-size: 10px;">CORS</a> <a href="/tags/Docker/" style="font-size: 11px;">Docker</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/LeetCode/" style="font-size: 16px;">LeetCode</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/MySQL/" style="font-size: 18px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 12px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 11px;">PHP</a> <a href="/tags/Plan/" style="font-size: 10px;">Plan</a> <a href="/tags/Redis/" style="font-size: 12px;">Redis</a> <a href="/tags/%E6%84%9F%E6%82%9F/" style="font-size: 14px;">感悟</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">技术</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 13px;">服务器</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 10px;">算法</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 14px;">翻译</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/" style="font-size: 17px;">诗词赋</a> <a href="/tags/%E8%BD%AC%E8%BD%BD/" style="font-size: 10px;">转载</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">五月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">十二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/01/13/%E4%BD%BF%E7%94%A8%20awk%20%E5%91%BD%E4%BB%A4%E7%AD%9B%E9%80%89%20csv%20%E6%8C%87%E5%AE%9A%E8%A1%8C/">使用 awk 命令筛选 csv 指定行</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/17/linux%20%E6%9B%BF%E6%8D%A2%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2/">linux 替换多行字符串</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/07/%E8%A5%BF%E5%9B%AD%E5%90%9F/">西园吟</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/22/%E5%B0%91%E5%B9%B4%E6%B8%B8/">少年游</a>
+          </li>
+        
+          <li>
+            <a href="/2022/02/10/%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%20tcpdump%20%E7%9A%84%E4%BD%BF%E7%94%A8/">网络抓包工具 tcpdump 的使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Chen Gangyang<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
