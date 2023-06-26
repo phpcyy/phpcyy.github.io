@@ -198,15 +198,25 @@
       
           <p><code>csv</code>，全称<code>Comma-Separated Values</code>，翻译为中文就是“逗号分隔值”（其实分隔符可以是逗号、制表符或者空格）。理解了这一点，便可以很简单的将数据导出为csv。</p>
 <p>表格其实就是二维数组，分为列和行。例如班级表：</p>
-<p>姓名</p>
-<p>年龄</p>
-<p>性别</p>
-<p>小明</p>
-<p>12</p>
-<p>男</p>
-<p>小芳</p>
-<p>11</p>
-<p>女</p>
+<table>
+<thead>
+<tr>
+<th>姓名</th>
+<th>年龄</th>
+<th>性别</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>小明</td>
+<td>12</td>
+<td>男</td>
+</tr>
+<tr>
+<td>小芳</td>
+<td>11</td>
+<td>女</td>
+</tr>
+</tbody></table>
 <p>转化为csv之后的值为</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">姓名, 年龄, 性别</span><br><span class="line">小明, 12, 男</span><br><span class="line">小芳, 11, 女</span><br></pre></td></tr></table></figure>
 
@@ -429,30 +439,70 @@
 <p>本文主要围绕 Technical Typography 进行讨论.</p>
 <h2 id="选择字体"><a href="#选择字体" class="headerlink" title="选择字体"></a>选择字体</h2><p>在 Web 上应用字体，是一门技术，同时也是一门艺术. 由于计算机历史发展的原因，西文有大量优秀的字体可供选择，可对于中文来说就是一项挑战. 主流操作系统提供的本地中文字体极少，另一方面中文字体组成的特殊性，其体积过于庞大，无法良好地使用 webfont. 所以编写健壮的 <code>font-family</code> 是一件需要深思熟虑的事情.</p>
 <p>以下列出各种平台下合适的中西文字体：</p>
-<p>Mac</p>
-<p>Windows</p>
-<p>Linux</p>
-<p>冬青黑体 Hiragino Sans GB</p>
-<p>中易宋体 SimSun</p>
-<p>文泉驿微米黑WenQuanYi Microhei</p>
-<p>黑体-简（华文黑体）Heiti SC (STHeiti)</p>
-<p>微软雅黑Microsoft YaHei</p>
-<p>宋体-简（华文宋体）Songti SC (STSong)</p>
-<p>iOS</p>
-<p>Android</p>
-<p>黑体-简（华文黑体）Heiti SC (STHeiti)</p>
-<p>思源黑体Noto Sans CJK SC</p>
-<p>Droid Sans Fallback</p>
-<p>无衬线</p>
-<p>衬线</p>
-<p>等宽</p>
-<p>Lucida Grande</p>
-<p>Georgia</p>
-<p>Menlo</p>
-<p>Helvetica Neue</p>
-<p>Times New Roman</p>
-<p>Courier</p>
-<p>Arial</p>
+<table>
+<thead>
+<tr>
+<th>Mac</th>
+<th>Windows</th>
+<th>Linux</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>冬青黑体 Hiragino Sans GB</td>
+<td>中易宋体 SimSun</td>
+<td>文泉驿微米黑WenQuanYi Microhei</td>
+</tr>
+<tr>
+<td>黑体-简（华文黑体）Heiti SC (STHeiti)</td>
+<td>微软雅黑Microsoft YaHei</td>
+<td></td>
+</tr>
+<tr>
+<td>宋体-简（华文宋体）Songti SC (STSong)</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>iOS</th>
+<th>Android</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>黑体-简（华文黑体）Heiti SC (STHeiti)</td>
+<td>思源黑体Noto Sans CJK SC</td>
+</tr>
+<tr>
+<td></td>
+<td>Droid Sans Fallback</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>无衬线</th>
+<th>衬线</th>
+<th>等宽</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Lucida Grande</td>
+<td>Georgia</td>
+<td>Menlo</td>
+</tr>
+<tr>
+<td>Helvetica Neue</td>
+<td>Times New Roman</td>
+<td>Courier</td>
+</tr>
+<tr>
+<td>Arial</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
 <p>抛开宋&#x2F;明体长时间作为系统默认字体，所产生的审美疲劳，宋&#x2F;明体相比黑体是更合适作为内文字体. 大多的宋&#x2F;明体针对内文设计，横细直粗，造型方正，笔画在小字号的情况下，不会糊在一起，给人一种素雅的感觉. 而黑体笔画粗壮有力，引人注目，更适合作为标题使用.</p>
 <p>但大部分人已经习惯在网页上阅读黑体，以及宋&#x2F;明体在字重过大的情况下，显示效果还是不太理想. 所以内文默认提供黑体，可选择性的切换宋&#x2F;明体.</p>
 <p>按照以上表格提供的中文字体，为此我为内文和标题编写两套 <code>font-family</code>. 关于这两套 <code>font-family</code> 的选择和排序，等空闲时，再写一篇文章谈下.</p>

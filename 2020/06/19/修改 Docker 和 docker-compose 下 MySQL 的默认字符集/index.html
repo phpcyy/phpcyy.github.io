@@ -218,14 +218,26 @@
 <p>我们可以看下 MySQL 官方手册的如下片段：</p>
 <blockquote>
 <p><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/server-options.html#option_mysqld_character-set-client-handshake">--character-set-client-handshake</a></p>
-<p>Property</p>
-<p>Value</p>
-<p>Command-Line Format</p>
-<p>`–character-set-client-handshake[&#x3D;{OFF</p>
-<p>Type</p>
-<p>Boolean</p>
-<p>Default Value</p>
-<p><code>ON</code></p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Command-Line Format</td>
+<td>`–character-set-client-handshake[&#x3D;{OFF</td>
+</tr>
+<tr>
+<td>Type</td>
+<td>Boolean</td>
+</tr>
+<tr>
+<td>Default Value</td>
+<td><code>ON</code></td>
+</tr>
+</tbody></table>
 <p>Do not ignore character set information sent by the client. To ignore client information and use the default server character set, use <a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/server-options.html#option_mysqld_character-set-client-handshake"><code>--skip-character-set-client-handshake</code></a>; this makes MySQL behave like MySQL 4.0.</p>
 </blockquote>
 <p>也就是说在默认情况下，MySQL 客户端是使用客户端设置的编码的。可以通过 <code>--skip-character-set-client-handshake</code> 来让客户端使用服务端的编码，来保持编码的一致性。因为我们 docker 里边多数情况下都是连接 docker 里边的 MySQL 服务，所以设置 <code>--skip-character-set-client-handshake</code> 是非常合理的一个情况，这样便不必单独再去设置客户端编码。</p>
