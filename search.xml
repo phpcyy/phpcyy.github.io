@@ -852,23 +852,6 @@
       </tags>
   </entry>
   <entry>
-    <title>LeetCode: 罗马数字转化为整数</title>
-    <url>/2017/04/18/LeetCode:%20%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97%E8%BD%AC%E5%8C%96%E4%B8%BA%E6%95%B4%E6%95%B0/</url>
-    <content><![CDATA[<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><blockquote>
-<p>Given a roman numeral, convert it to an integer. Input is guaranteed to be within the range from 1 to 3999.</p>
-</blockquote>
-<p>翻译</p>
-<blockquote>
-<p>给出一个罗马数字，将其转化为整数。 输入被限定在在1到3999之间。</p>
-</blockquote>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">func romanToInt(s string) int &#123;</span><br><span class="line">    var result int</span><br><span class="line">    for len(s) &gt; 0 &#123;</span><br><span class="line">        if len(s) &gt;= 2 &#123;</span><br><span class="line">            curr := findRoman(s[:2])</span><br><span class="line">            if curr != 0 &#123;</span><br><span class="line">                result += curr</span><br><span class="line">                s = s[2:]</span><br><span class="line">                continue</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        result += findRoman(s[:1])</span><br><span class="line">        s = s[1:]</span><br><span class="line">    &#125;</span><br><span class="line">    return result</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func findRoman(s string) int &#123;</span><br><span class="line">    switch s &#123;</span><br><span class="line">    case &quot;I&quot;:</span><br><span class="line">        return 1</span><br><span class="line">    case &quot;IV&quot;:</span><br><span class="line">        return 4</span><br><span class="line">    case &quot;V&quot;:</span><br><span class="line">        return 5</span><br><span class="line">    case &quot;IX&quot;:</span><br><span class="line">        return 9</span><br><span class="line">    case &quot;X&quot;:</span><br><span class="line">        return 10</span><br><span class="line">    case &quot;XL&quot;:</span><br><span class="line">        return 40</span><br><span class="line">    case &quot;L&quot;:</span><br><span class="line">        return 50</span><br><span class="line">    case &quot;XC&quot;:</span><br><span class="line">        return 90</span><br><span class="line">    case &quot;C&quot;:</span><br><span class="line">        return 100</span><br><span class="line">    case &quot;CD&quot;:</span><br><span class="line">        return 400</span><br><span class="line">    case &quot;D&quot;:</span><br><span class="line">        return 500</span><br><span class="line">    case &quot;CM&quot;:</span><br><span class="line">        return 900</span><br><span class="line">    case &quot;M&quot;:</span><br><span class="line">        return 1000</span><br><span class="line">    default:</span><br><span class="line">        return 0</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>技术</tag>
-        <tag>LeetCode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>LeetCode: 部门薪水前三名</title>
     <url>/2017/03/22/LeetCode:%20%E9%83%A8%E9%97%A8%E8%96%AA%E6%B0%B4%E5%89%8D%E4%B8%89%E5%90%8D/</url>
     <content><![CDATA[<p>问题：</p>
@@ -885,6 +868,23 @@
 <p>SELECT<br>    t2. NAME AS Department,<br>    t1. NAME AS Employee,<br>    t1.Salary AS Salary<br>FROM<br>    Employee t1,<br>    Department t2<br>WHERE<br>    t1.DepartmentId &#x3D; t2.Id<br>AND (<br>    SELECT<br>        count(distinct(Salary))<br>    FROM<br>        Employee t3<br>    WHERE<br>        t3.DepartmentId &#x3D; t1.DepartmentId<br>    AND t3.Salary &gt; t1.Salary<br>) &lt; 3<br>ORDER BY<br>    Department,<br>    Salary DESC</p>
 ]]></content>
       <tags>
+        <tag>LeetCode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LeetCode: 罗马数字转化为整数</title>
+    <url>/2017/04/18/LeetCode:%20%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97%E8%BD%AC%E5%8C%96%E4%B8%BA%E6%95%B4%E6%95%B0/</url>
+    <content><![CDATA[<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><blockquote>
+<p>Given a roman numeral, convert it to an integer. Input is guaranteed to be within the range from 1 to 3999.</p>
+</blockquote>
+<p>翻译</p>
+<blockquote>
+<p>给出一个罗马数字，将其转化为整数。 输入被限定在在1到3999之间。</p>
+</blockquote>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">func romanToInt(s string) int &#123;</span><br><span class="line">    var result int</span><br><span class="line">    for len(s) &gt; 0 &#123;</span><br><span class="line">        if len(s) &gt;= 2 &#123;</span><br><span class="line">            curr := findRoman(s[:2])</span><br><span class="line">            if curr != 0 &#123;</span><br><span class="line">                result += curr</span><br><span class="line">                s = s[2:]</span><br><span class="line">                continue</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        result += findRoman(s[:1])</span><br><span class="line">        s = s[1:]</span><br><span class="line">    &#125;</span><br><span class="line">    return result</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func findRoman(s string) int &#123;</span><br><span class="line">    switch s &#123;</span><br><span class="line">    case &quot;I&quot;:</span><br><span class="line">        return 1</span><br><span class="line">    case &quot;IV&quot;:</span><br><span class="line">        return 4</span><br><span class="line">    case &quot;V&quot;:</span><br><span class="line">        return 5</span><br><span class="line">    case &quot;IX&quot;:</span><br><span class="line">        return 9</span><br><span class="line">    case &quot;X&quot;:</span><br><span class="line">        return 10</span><br><span class="line">    case &quot;XL&quot;:</span><br><span class="line">        return 40</span><br><span class="line">    case &quot;L&quot;:</span><br><span class="line">        return 50</span><br><span class="line">    case &quot;XC&quot;:</span><br><span class="line">        return 90</span><br><span class="line">    case &quot;C&quot;:</span><br><span class="line">        return 100</span><br><span class="line">    case &quot;CD&quot;:</span><br><span class="line">        return 400</span><br><span class="line">    case &quot;D&quot;:</span><br><span class="line">        return 500</span><br><span class="line">    case &quot;CM&quot;:</span><br><span class="line">        return 900</span><br><span class="line">    case &quot;M&quot;:</span><br><span class="line">        return 1000</span><br><span class="line">    default:</span><br><span class="line">        return 0</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>技术</tag>
         <tag>LeetCode</tag>
       </tags>
   </entry>
@@ -930,24 +930,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux 下缓存域名解析的安装与配置</title>
-    <url>/2017/05/09/Linux%20%E4%B8%8B%E7%BC%93%E5%AD%98%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<p>在 Linux 系统中，很多服务都要调用域名解析服务，一般通过<code>/etc/resolv.conf</code>来指定 DNS 服务器的 ip。每次外部访问都会首先访问 DNS 服务器，这样会导致延时增加。如果网络不好的情况下，还会遇到域名解析失败的情况。在这种情况下，需要通过配置 DNS 解析缓存服务，从而优化 DNS 响应速度，减少外部网络依赖。</p>
-<h2 id="NSCD安装"><a href="#NSCD安装" class="headerlink" title="NSCD安装"></a>NSCD安装</h2><p>NSCD（Name Service Caching Daemon，名称服务缓存进程）不需要对应用程序和 DNS 配置文件做任何修改，对系统的部署影响最小。因此，NSCD 成为 Linux 下广泛使用的域名缓存软件。</p>
-<p>CentOS 下安装</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum -y install nscd</span><br></pre></td></tr></table></figure>
-
-<p>Ubuntu 下安装同样简单</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">apt-get install nscd</span><br></pre></td></tr></table></figure>
-
-<p>NSCD的配置文件是<code>/etc/nscd.conf</code>，核心配置如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#是否启用缓存</span><br><span class="line">enable-cache            hosts           yes </span><br><span class="line">#解析成功的结果缓存时间</span><br><span class="line">positive-time-to-live   hosts           3600</span><br><span class="line">#解析失败的结果缓存时间</span><br><span class="line">negative-time-to-live  hosts           20</span><br><span class="line">#缓存条目数量</span><br><span class="line">suggested-size          hosts           211</span><br><span class="line">#是否检查hosts文件变化</span><br><span class="line">check-files                 hosts           yes</span><br><span class="line">#是否在重启时保留之前缓存条目</span><br><span class="line">persistent                  hosts           yes</span><br><span class="line">#是否允许客户端直接查询NSCD的内存镜像以获得结果</span><br><span class="line">shared                       hosts           yes</span><br><span class="line">#DNS的缓存大小</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>技术</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux 下 shadowsocks 客户端的使用</title>
     <url>/2017/06/19/Linux%20%E4%B8%8B%20shadowsocks%20%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<p>在 linux 服务器上，很多资源仍然需要通过代理来获取。比如<code>go</code>中的包大多数都不能够直接安装，因此需要使用 shadowsocks 来启动代理来访问相应网站。</p>
@@ -975,6 +957,24 @@
 
 <p>然后你就可以通过代理来访问想访问的网址了。例如：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">go get golang.org/x/net/websocket</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>技术</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 下缓存域名解析的安装与配置</title>
+    <url>/2017/05/09/Linux%20%E4%B8%8B%E7%BC%93%E5%AD%98%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<p>在 Linux 系统中，很多服务都要调用域名解析服务，一般通过<code>/etc/resolv.conf</code>来指定 DNS 服务器的 ip。每次外部访问都会首先访问 DNS 服务器，这样会导致延时增加。如果网络不好的情况下，还会遇到域名解析失败的情况。在这种情况下，需要通过配置 DNS 解析缓存服务，从而优化 DNS 响应速度，减少外部网络依赖。</p>
+<h2 id="NSCD安装"><a href="#NSCD安装" class="headerlink" title="NSCD安装"></a>NSCD安装</h2><p>NSCD（Name Service Caching Daemon，名称服务缓存进程）不需要对应用程序和 DNS 配置文件做任何修改，对系统的部署影响最小。因此，NSCD 成为 Linux 下广泛使用的域名缓存软件。</p>
+<p>CentOS 下安装</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum -y install nscd</span><br></pre></td></tr></table></figure>
+
+<p>Ubuntu 下安装同样简单</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">apt-get install nscd</span><br></pre></td></tr></table></figure>
+
+<p>NSCD的配置文件是<code>/etc/nscd.conf</code>，核心配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#是否启用缓存</span><br><span class="line">enable-cache            hosts           yes </span><br><span class="line">#解析成功的结果缓存时间</span><br><span class="line">positive-time-to-live   hosts           3600</span><br><span class="line">#解析失败的结果缓存时间</span><br><span class="line">negative-time-to-live  hosts           20</span><br><span class="line">#缓存条目数量</span><br><span class="line">suggested-size          hosts           211</span><br><span class="line">#是否检查hosts文件变化</span><br><span class="line">check-files                 hosts           yes</span><br><span class="line">#是否在重启时保留之前缓存条目</span><br><span class="line">persistent                  hosts           yes</span><br><span class="line">#是否允许客户端直接查询NSCD的内存镜像以获得结果</span><br><span class="line">shared                       hosts           yes</span><br><span class="line">#DNS的缓存大小</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>技术</tag>
@@ -1276,25 +1276,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Nginx 支持 php 和 ThinkPHP</title>
-    <url>/2016/12/08/Nginx%20%E6%94%AF%E6%8C%81%20php%20%E5%92%8C%20ThinkPHP/</url>
-    <content><![CDATA[<h1 id="遇到问题"><a href="#遇到问题" class="headerlink" title="遇到问题"></a>遇到问题</h1><p>在linux-mint下安装完 Nginx 后，当然要支持php才能真正工作。可是尝试了很久都没有成功（以前很容易就成功了），原来是 php-fpm 支持方式发生了变化，我以前用的方法早已经过时了。 </p>
-<h1 id="详细过程"><a href="#详细过程" class="headerlink" title="详细过程"></a>详细过程</h1><p>Nginx 无论是用apt方式还是用编译方式都不麻烦，所以直接记录 php-fpm 的配置。按照以前的思想，php-fpm 工作在127.0.0.1:9000端口上，我直接配置后却出现了502 Bad GateWay页面。查看nginx日志文件，发现错误是无法连接到本机9000端口。于是查找 php-fpm.conf，在其兄弟文件夹 pool.d 下发现 <a href="http://www.conf/">www.conf</a>，关键一句打开是这样的<code>listen = /var/run/php5-fpm.sock</code>，通过查阅资料得知php-fpm有两种工作方式，一种是利用tcp，另一种直接使用socket，socket的方式会更快。因此，nginx下的配置<code>fastcgi_pass 127.0.0.1:9000;</code>的方式显然不支持 socket 方式。所以，只需要将其更改为<code>fastcgi_pass unix:/var/run/php5-fpm.sock;</code>以后，Nginx 就可以正常工作了。</p>
-<h1 id="支持-ThinkPHP"><a href="#支持-ThinkPHP" class="headerlink" title="支持 ThinkPHP"></a>支持 ThinkPHP</h1><p>对 ThinkPHP 的支持其实主要是对 .htaccess 文件的支持，主要是为了去掉 index.php。实现有两种方式，其中一种是直接引入<code>include $path/.htaccess</code>，另一种是修改<code>location / &#123;&#125;</code>，但是 Apache 和 Nginx 的 .htaccess 文件语法不同，在 Nginx 下正确的配置是</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    if (!-e $request_filename) &#123;</span><br><span class="line">         rewrite  ^(.*)$  /index.php?s=$1  last;</span><br><span class="line">         break;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><ul>
-<li><p>多站点支持可以连续写也可以各自写在相应的server.conf中。</p>
-</li>
-<li><p>多域名和子域名配置时支持连写<code>server_name [[www.adc.com](http://www.adc.com)]([http://www.adc.com](http://www.adc.com)) lol.adc.com</code>也支持通配符<code>*.adc.com</code></p>
-</li>
-</ul>
-]]></content>
-      <tags>
-        <tag>技术</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Nginx 开启基本 http 认证</title>
     <url>/2017/10/11/Nginx%20%E5%BC%80%E5%90%AF%E5%9F%BA%E6%9C%AC%20http%20%E8%AE%A4%E8%AF%81/</url>
     <content><![CDATA[<p>有时候我们的网站仅仅是为了提供简单的查询服务，但是又要保密，这时候如果写一个认证服务又没什么必要，这时候使用 Nginx 的“约束访问”功能可以轻松地实现基本认证服务。</p>
@@ -1316,6 +1297,25 @@
       <tags>
         <tag>服务器</tag>
         <tag>Nginx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Nginx 支持 php 和 ThinkPHP</title>
+    <url>/2016/12/08/Nginx%20%E6%94%AF%E6%8C%81%20php%20%E5%92%8C%20ThinkPHP/</url>
+    <content><![CDATA[<h1 id="遇到问题"><a href="#遇到问题" class="headerlink" title="遇到问题"></a>遇到问题</h1><p>在linux-mint下安装完 Nginx 后，当然要支持php才能真正工作。可是尝试了很久都没有成功（以前很容易就成功了），原来是 php-fpm 支持方式发生了变化，我以前用的方法早已经过时了。 </p>
+<h1 id="详细过程"><a href="#详细过程" class="headerlink" title="详细过程"></a>详细过程</h1><p>Nginx 无论是用apt方式还是用编译方式都不麻烦，所以直接记录 php-fpm 的配置。按照以前的思想，php-fpm 工作在127.0.0.1:9000端口上，我直接配置后却出现了502 Bad GateWay页面。查看nginx日志文件，发现错误是无法连接到本机9000端口。于是查找 php-fpm.conf，在其兄弟文件夹 pool.d 下发现 <a href="http://www.conf/">www.conf</a>，关键一句打开是这样的<code>listen = /var/run/php5-fpm.sock</code>，通过查阅资料得知php-fpm有两种工作方式，一种是利用tcp，另一种直接使用socket，socket的方式会更快。因此，nginx下的配置<code>fastcgi_pass 127.0.0.1:9000;</code>的方式显然不支持 socket 方式。所以，只需要将其更改为<code>fastcgi_pass unix:/var/run/php5-fpm.sock;</code>以后，Nginx 就可以正常工作了。</p>
+<h1 id="支持-ThinkPHP"><a href="#支持-ThinkPHP" class="headerlink" title="支持 ThinkPHP"></a>支持 ThinkPHP</h1><p>对 ThinkPHP 的支持其实主要是对 .htaccess 文件的支持，主要是为了去掉 index.php。实现有两种方式，其中一种是直接引入<code>include $path/.htaccess</code>，另一种是修改<code>location / &#123;&#125;</code>，但是 Apache 和 Nginx 的 .htaccess 文件语法不同，在 Nginx 下正确的配置是</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    if (!-e $request_filename) &#123;</span><br><span class="line">         rewrite  ^(.*)$  /index.php?s=$1  last;</span><br><span class="line">         break;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><ul>
+<li><p>多站点支持可以连续写也可以各自写在相应的server.conf中。</p>
+</li>
+<li><p>多域名和子域名配置时支持连写<code>server_name [[www.adc.com](http://www.adc.com)]([http://www.adc.com](http://www.adc.com)) lol.adc.com</code>也支持通配符<code>*.adc.com</code></p>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>技术</tag>
       </tags>
   </entry>
   <entry>
@@ -2176,23 +2176,6 @@
       </tags>
   </entry>
   <entry>
-    <title>xargs 的一个小例子: 使用 xargs 来批量重命名</title>
-    <url>/2018/11/27/xargs%20%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E4%BE%8B%E5%AD%90:%20%E4%BD%BF%E7%94%A8%20xargs%20%E6%9D%A5%E6%89%B9%E9%87%8F%E9%87%8D%E5%91%BD%E5%90%8D/</url>
-    <content><![CDATA[<p>使用 <code>xargs -I &#123;&#125;</code> 来用 <code>&#123;&#125;</code> 替代输入字符</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ ll 1.* | awk &#x27;&#123;print $9&#125;&#x27;</span><br><span class="line">1.1.c</span><br><span class="line">1.2.c</span><br><span class="line">1.3.c</span><br><span class="line">1.4.c</span><br><span class="line">1.4.h</span><br><span class="line">1.5.c</span><br><span class="line">1.6.c</span><br><span class="line">1.7.c</span><br><span class="line">1.8.c</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ ll 1.* | awk &#x27;&#123;print $9&#125;&#x27; | cut -c 3- | xargs -I &#123;&#125; mv 1.&#123;&#125; 2.&#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>使用该命令来将所有<code>1.</code>开头的文件重命名为<code>2.</code>开头。</p>
-<p>运行结果</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ ll 1.* | awk &#x27;&#123;print $9&#125;&#x27;</span><br><span class="line">2.1.c</span><br><span class="line">2.2.c</span><br><span class="line">2.3.c</span><br><span class="line">2.4.c</span><br><span class="line">2.4.h</span><br><span class="line">2.5.c</span><br><span class="line">2.6.c</span><br><span class="line">2.7.c</span><br><span class="line">2.8.c</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>技术</tag>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>【译】HTTP/2 Server Push</title>
     <url>/2020/01/15/%E3%80%90%E8%AF%91%E3%80%91HTTP_2%20Server%20Push/</url>
     <content><![CDATA[<h1 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h1><p>HTTP&#x2F;2 旨在解决许多 HTTP&#x2F;1.x 的缺点。现在的网页使用很多 HTML、CSS、JavaScript、图片等资源，在 HTTP&#x2F;1.x 中，每个资源必须被显式请求。这会是一个漫长的过程。浏览器先获取 HTML，然后一边解析页面，一边获取更多资源。服务器必须等着浏览器发起每次请求，这就导致网络会经常空闲、未充分利用起来。</p>
@@ -2245,6 +2228,23 @@
         <tag>技术</tag>
         <tag>Golang</tag>
         <tag>翻译</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>xargs 的一个小例子: 使用 xargs 来批量重命名</title>
+    <url>/2018/11/27/xargs%20%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E4%BE%8B%E5%AD%90:%20%E4%BD%BF%E7%94%A8%20xargs%20%E6%9D%A5%E6%89%B9%E9%87%8F%E9%87%8D%E5%91%BD%E5%90%8D/</url>
+    <content><![CDATA[<p>使用 <code>xargs -I &#123;&#125;</code> 来用 <code>&#123;&#125;</code> 替代输入字符</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ ll 1.* | awk &#x27;&#123;print $9&#125;&#x27;</span><br><span class="line">1.1.c</span><br><span class="line">1.2.c</span><br><span class="line">1.3.c</span><br><span class="line">1.4.c</span><br><span class="line">1.4.h</span><br><span class="line">1.5.c</span><br><span class="line">1.6.c</span><br><span class="line">1.7.c</span><br><span class="line">1.8.c</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ ll 1.* | awk &#x27;&#123;print $9&#125;&#x27; | cut -c 3- | xargs -I &#123;&#125; mv 1.&#123;&#125; 2.&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用该命令来将所有<code>1.</code>开头的文件重命名为<code>2.</code>开头。</p>
+<p>运行结果</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ ll 1.* | awk &#x27;&#123;print $9&#125;&#x27;</span><br><span class="line">2.1.c</span><br><span class="line">2.2.c</span><br><span class="line">2.3.c</span><br><span class="line">2.4.c</span><br><span class="line">2.4.h</span><br><span class="line">2.5.c</span><br><span class="line">2.6.c</span><br><span class="line">2.7.c</span><br><span class="line">2.8.c</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>技术</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -2765,18 +2765,6 @@
       </tags>
   </entry>
   <entry>
-    <title>无极</title>
-    <url>/2017/04/01/%E6%97%A0%E6%9E%81/</url>
-    <content><![CDATA[<p>一落又一落，</p>
-<p>几堕复几堕？</p>
-<p>无极向下去，</p>
-<p>天下不知我。</p>
-]]></content>
-      <tags>
-        <tag>诗词赋</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>札记·一</title>
     <url>/2016/11/07/%E6%9C%AD%E8%AE%B0%C2%B7%E4%B8%80/</url>
     <content><![CDATA[<p>立冬倏忽而至，忽觉四季变换，岁月轮回。</p>
@@ -2794,6 +2782,18 @@
 ]]></content>
       <tags>
         <tag>感悟</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>无极</title>
+    <url>/2017/04/01/%E6%97%A0%E6%9E%81/</url>
+    <content><![CDATA[<p>一落又一落，</p>
+<p>几堕复几堕？</p>
+<p>无极向下去，</p>
+<p>天下不知我。</p>
+]]></content>
+      <tags>
+        <tag>诗词赋</tag>
       </tags>
   </entry>
   <entry>
