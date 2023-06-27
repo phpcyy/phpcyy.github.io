@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Castle，专属于自己的领地</title>
+  <icon>https://www.gonever.com/icon.png</icon>
+  <subtitle>我的沉思、笔记和回忆</subtitle>
+  <link href="https://www.gonever.com/atom.xml" rel="self"/>
+  
+  <link href="https://www.gonever.com/"/>
+  <updated>2023-03-16T01:01:41.000Z</updated>
+  <id>https://www.gonever.com/</id>
+  
+  <author>
+    <name>陈钢阳</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>使用 awk 命令筛选 csv 指定行</title>
+    <link href="https://www.gonever.com/2023/01/13/%E4%BD%BF%E7%94%A8%20awk%20%E5%91%BD%E4%BB%A4%E7%AD%9B%E9%80%89%20csv%20%E6%8C%87%E5%AE%9A%E8%A1%8C/"/>
+    <id>https://www.gonever.com/2023/01/13/%E4%BD%BF%E7%94%A8%20awk%20%E5%91%BD%E4%BB%A4%E7%AD%9B%E9%80%89%20csv%20%E6%8C%87%E5%AE%9A%E8%A1%8C/</id>
+    <published>2023-01-13T02:38:14.000Z</published>
+    <updated>2023-03-16T01:01:41.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;今天处理一个上百万行 csv 的文件，需要统计第二列大于 0 且小于 5 的行数，思来想去觉得用 shell 的 if 可以实现，但是需要多行代码，后来想到可以用 awk 命令来实现。&lt;/p&gt;
+&lt;p&gt;命令如下：&lt;/p&gt;
+&lt;figure class=&quot;highlight</summary>
+        
+      
+    
+    
+    
+    
+    <category term="技术" scheme="https://www.gonever.com/tags/%E6%8A%80%E6%9C%AF/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>linux 替换多行字符串</title>
+    <link href="https://www.gonever.com/2022/05/17/linux%20%E6%9B%BF%E6%8D%A2%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2/"/>
+    <id>https://www.gonever.com/2022/05/17/linux%20%E6%9B%BF%E6%8D%A2%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2/</id>
+    <published>2022-05-17T07:43:31.000Z</published>
+    <updated>2023-03-16T00:54:15.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;例如替换&lt;/p&gt;
+&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span</summary>
+        
+      
+    
+    
+    
+    
+    <category term="技术" scheme="https://www.gonever.com/tags/%E6%8A%80%E6%9C%AF/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>西园吟</title>
+    <link href="https://www.gonever.com/2022/04/07/%E8%A5%BF%E5%9B%AD%E5%90%9F/"/>
+    <id>https://www.gonever.com/2022/04/07/%E8%A5%BF%E5%9B%AD%E5%90%9F/</id>
+    <published>2022-04-07T05:36:32.000Z</published>
+    <updated>2023-03-16T00:54:26.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;人罕小园芜，&lt;br&gt;虫多老树枯。&lt;br&gt;破壁遮阳冷，&lt;br&gt;野蒿伴影孤。&lt;br&gt;凫雁飞南北，&lt;br&gt;游子遍苦舒。&lt;br&gt;再回园中坐，&lt;br&gt;愿留不愿出。&lt;/p&gt;
+</summary>
+        
+      
+    
+    
+    
+    
+    <category term="诗词赋" scheme="https://www.gonever.com/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>少年游</title>
+    <link href="https://www.gonever.com/2022/03/22/%E5%B0%91%E5%B9%B4%E6%B8%B8/"/>
+    <id>https://www.gonever.com/2022/03/22/%E5%B0%91%E5%B9%B4%E6%B8%B8/</id>
+    <published>2022-03-22T06:24:21.000Z</published>
+    <updated>2023-03-16T01:45:23.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;江南烟雨濛濛时，&lt;br&gt;东风解相思。&lt;br&gt;梅落兰心，&lt;br&gt;竹拥棠臂，&lt;br&gt;梨花泪眼湿。&lt;/p&gt;
+&lt;p&gt;四海茫茫天涯老，&lt;br&gt;从来欢聚稀。&lt;br&gt;摇舟策马，&lt;br&gt;醉柳沉烟，&lt;br&gt;不待春暮迟。&lt;/p&gt;
+</summary>
+        
+      
+    
+    
+    
+    
+    <category term="诗词赋" scheme="https://www.gonever.com/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>网络抓包工具 tcpdump 的使用</title>
+    <link href="https://www.gonever.com/2022/02/10/%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%20tcpdump%20%E7%9A%84%E4%BD%BF%E7%94%A8/"/>
+    <id>https://www.gonever.com/2022/02/10/%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%20tcpdump%20%E7%9A%84%E4%BD%BF%E7%94%A8/</id>
+    <published>2022-02-10T06:42:00.000Z</published>
+    <updated>2023-03-16T00:54:26.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;tcpdump 是 linux 下最常用的抓包应用，这里记录下常见的用法和表达式语法。&lt;/p&gt;
+&lt;h2 id=&quot;常用命令&quot;&gt;&lt;a href=&quot;#常用命令&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    
+    <category term="技术" scheme="https://www.gonever.com/tags/%E6%8A%80%E6%9C%AF/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>少年游·凤凰</title>
+    <link href="https://www.gonever.com/2021/12/31/%E5%B0%91%E5%B9%B4%E6%B8%B8%C2%B7%E5%87%A4%E5%87%B0/"/>
+    <id>https://www.gonever.com/2021/12/31/%E5%B0%91%E5%B9%B4%E6%B8%B8%C2%B7%E5%87%A4%E5%87%B0/</id>
+    <published>2021-12-31T05:24:35.000Z</published>
+    <updated>2023-03-16T00:54:18.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;又见飞鸿点橙纹，&lt;br&gt;棹影动黄昏。&lt;br&gt;轻舟且住，&lt;br&gt;横笛未绝，&lt;br&gt;缓缓向城门。&lt;/p&gt;
+&lt;p&gt;昨日芳菲何处寻，&lt;br&gt;漫天落纷纷。&lt;br&gt;一曲新词，&lt;br&gt;两笺碎字，&lt;br&gt;潦草忧忧心。&lt;/p&gt;
+</summary>
+        
+      
+    
+    
+    
+    
+    <category term="诗词赋" scheme="https://www.gonever.com/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>乡野月夜行</title>
+    <link href="https://www.gonever.com/2021/10/08/%E4%B9%A1%E9%87%8E%E6%9C%88%E5%A4%9C%E8%A1%8C/"/>
+    <id>https://www.gonever.com/2021/10/08/%E4%B9%A1%E9%87%8E%E6%9C%88%E5%A4%9C%E8%A1%8C/</id>
+    <published>2021-10-08T07:13:39.000Z</published>
+    <updated>2023-03-16T00:54:14.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;月照故乡明，夜清风亦清。&lt;br&gt;长空星灿灿，旷野虫荧荧。&lt;br&gt;皎皎归家路，隐隐旧人声。&lt;br&gt;十载他乡客，久违儿时名。&lt;/p&gt;
+</summary>
+        
+      
+    
+    
+    
+    
+    <category term="诗词赋" scheme="https://www.gonever.com/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>长相思·夜</title>
+    <link href="https://www.gonever.com/2021/09/18/%E9%95%BF%E7%9B%B8%E6%80%9D%C2%B7%E5%A4%9C/"/>
+    <id>https://www.gonever.com/2021/09/18/%E9%95%BF%E7%9B%B8%E6%80%9D%C2%B7%E5%A4%9C/</id>
+    <published>2021-09-18T07:06:24.000Z</published>
+    <updated>2023-03-16T01:05:36.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;月儿缺，&lt;br&gt;月儿圆，&lt;br&gt;风吹芭蕉人未眠。&lt;br&gt;独自忆流年。&lt;/p&gt;
+&lt;p&gt;故乡近，&lt;br&gt;故乡远。&lt;br&gt;十载倏忽如梦间。&lt;br&gt;惟念儿时天。&lt;/p&gt;
+</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>雨中陌上行</title>
+    <link href="https://www.gonever.com/2021/08/17/%E9%9B%A8%E4%B8%AD%E9%99%8C%E4%B8%8A%E8%A1%8C/"/>
+    <id>https://www.gonever.com/2021/08/17/%E9%9B%A8%E4%B8%AD%E9%99%8C%E4%B8%8A%E8%A1%8C/</id>
+    <published>2021-08-17T08:54:25.000Z</published>
+    <updated>2023-03-16T01:03:30.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;风雨落南溪，陌上水漓漓。&lt;br&gt;雾随芳草远，鸟共行人稀。&lt;br&gt;有家何京洛，无念即佳期。&lt;br&gt;徜徉心醉处，岂顾湿我衣。&lt;/p&gt;
+</summary>
+        
+      
+    
+    
+    
+    
+    <category term="诗词赋" scheme="https://www.gonever.com/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>长相思·蝉</title>
+    <link href="https://www.gonever.com/2021/08/06/%E9%95%BF%E7%9B%B8%E6%80%9D%C2%B7%E8%9D%89/"/>
+    <id>https://www.gonever.com/2021/08/06/%E9%95%BF%E7%9B%B8%E6%80%9D%C2%B7%E8%9D%89/</id>
+    <published>2021-08-06T09:39:44.000Z</published>
+    <updated>2023-03-16T00:54:13.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;月高悬，&lt;br&gt;叶翩翩，&lt;br&gt;南窗梢头正鸣蝉。&lt;br&gt;声断白云间。&lt;/p&gt;
+&lt;p&gt;莫贪欢，&lt;br&gt;前路难，&lt;br&gt;未及高处已觉寒。&lt;br&gt;秋霜又眼前。&lt;/p&gt;
+</summary>
+        
+      
+    
+    
+    
+    
+    <category term="诗词赋" scheme="https://www.gonever.com/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>观海</title>
+    <link href="https://www.gonever.com/2021/08/06/%E8%A7%82%E6%B5%B7/"/>
+    <id>https://www.gonever.com/2021/08/06/%E8%A7%82%E6%B5%B7/</id>
+    <published>2021-08-06T09:36:27.000Z</published>
+    <updated>2023-03-09T07:02:42.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;清风拂南浦，微浪拍青泥。&lt;br&gt;赤霞惊走蟹，白鹭喜衔鱼。&lt;br&gt;细沙滚顽儿，阔海逐姝女。&lt;br&gt;遥遥万里梦，今夕似往夕。&lt;/p&gt;
+</summary>
+        
+      
+    
+    
+    
+    
+    <category term="诗词赋" scheme="https://www.gonever.com/tags/%E8%AF%97%E8%AF%8D%E8%B5%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>2021 年第一季度总结</title>
+    <link href="https://www.gonever.com/2021/04/09/2021%20%E5%B9%B4%E7%AC%AC%E4%B8%80%E5%AD%A3%E5%BA%A6%E6%80%BB%E7%BB%93/"/>
+    <id>https://www.gonever.com/2021/04/09/2021%20%E5%B9%B4%E7%AC%AC%E4%B8%80%E5%AD%A3%E5%BA%A6%E6%80%BB%E7%BB%93/</id>
+    <published>2021-04-09T05:38:11.000Z</published>
+    <updated>2023-03-08T04:00:41.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;阅读&quot;&gt;&lt;a href=&quot;#阅读&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>TarsBenchmark 使用指南</title>
+    <link href="https://www.gonever.com/2021/02/04/TarsBenchmark%20%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/"/>
+    <id>https://www.gonever.com/2021/02/04/TarsBenchmark%20%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</id>
+    <published>2021-02-04T02:38:26.000Z</published>
+    <updated>2023-03-09T06:42:44.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;TarsBenchmark 可以用来压测 tars 服务，方便测试服务的性能。TarsBenchmark 主要依赖 tars2case 命令和 tb 命令。&lt;/p&gt;
+&lt;p&gt;tars2case 命令用于生成测试用例，tb 命令用来进行压测。&lt;/p&gt;
+&lt;h2</summary>
+        
+      
+    
+    
+    
+    
+    <category term="技术" scheme="https://www.gonever.com/tags/%E6%8A%80%E6%9C%AF/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>2021 新年 Flag</title>
+    <link href="https://www.gonever.com/2021/01/01/2021%20%E6%96%B0%E5%B9%B4%20Flag/"/>
+    <id>https://www.gonever.com/2021/01/01/2021%20%E6%96%B0%E5%B9%B4%20Flag/</id>
+    <published>2021-01-01T02:14:48.000Z</published>
+    <updated>2023-02-27T13:18:35.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;ol&gt;
+&lt;li&gt;坚持阅读，阅读 4 本技术书籍，总共 24 本书籍&lt;/li&gt;
+&lt;li&gt;学习外语， 利用单词 APP 和单词本背单词，打卡 340 次以上&lt;/li&gt;
+&lt;li&gt;记录与分享，博客更新 24</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>MacOS 升级 Big Sur 遇到的问题及解决办法</title>
+    <link href="https://www.gonever.com/2020/11/18/MacOS%20%E5%8D%87%E7%BA%A7%20Big%20Sur%20%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/"/>
+    <id>https://www.gonever.com/2020/11/18/MacOS%20%E5%8D%87%E7%BA%A7%20Big%20Sur%20%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/</id>
+    <published>2020-11-18T06:13:24.000Z</published>
+    <updated>2023-03-09T10:32:20.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;Apple 最近发布了 Big Sur，由于实在是受不了小红点，就尝鲜升级到了新版本的系统。然而，还是遇到了很多问题。&lt;/p&gt;
+&lt;h2 id=&quot;2K-显示屏字体过小问题&quot;&gt;&lt;a href=&quot;#2K-显示屏字体过小问题&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>mysqlshow —— 快速获取 MySQL 的库、表、列和索引信息</title>
+    <link href="https://www.gonever.com/2020/09/30/mysqlshow%20%E2%80%94%E2%80%94%20%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96%20MySQL%20%E7%9A%84%E5%BA%93%E3%80%81%E8%A1%A8%E3%80%81%E5%88%97%E5%92%8C%E7%B4%A2%E5%BC%95%E4%BF%A1%E6%81%AF/"/>
+    <id>https://www.gonever.com/2020/09/30/mysqlshow%20%E2%80%94%E2%80%94%20%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96%20MySQL%20%E7%9A%84%E5%BA%93%E3%80%81%E8%A1%A8%E3%80%81%E5%88%97%E5%92%8C%E7%B4%A2%E5%BC%95%E4%BF%A1%E6%81%AF/</id>
+    <published>2020-09-30T08:50:14.000Z</published>
+    <updated>2023-03-15T01:35:42.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;大部分开源应用都是用了 MySQL 数据库。了解如何获取 MySQL 数据库的高阶信息，对于调试开源应用程序非常重要。在这篇文章中，我将用 9 个例子来说明如何查看任何 MySQL 数据库的数据库、表、列和索引的信息。&lt;/p&gt;
+&lt;p&gt;在接下来的 mysqlshow</summary>
+        
+      
+    
+    
+    
+    
+    <category term="技术" scheme="https://www.gonever.com/tags/%E6%8A%80%E6%9C%AF/"/>
+    
+    <category term="MySQL" scheme="https://www.gonever.com/tags/MySQL/"/>
+    
+    <category term="翻译" scheme="https://www.gonever.com/tags/%E7%BF%BB%E8%AF%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>如何将你的 golang 库升级到 v2 版本</title>
+    <link href="https://www.gonever.com/2020/09/18/%E5%A6%82%E4%BD%95%E5%B0%86%E4%BD%A0%E7%9A%84%20golang%20%E5%BA%93%E5%8D%87%E7%BA%A7%E5%88%B0%20v2%20%E7%89%88%E6%9C%AC/"/>
+    <id>https://www.gonever.com/2020/09/18/%E5%A6%82%E4%BD%95%E5%B0%86%E4%BD%A0%E7%9A%84%20golang%20%E5%BA%93%E5%8D%87%E7%BA%A7%E5%88%B0%20v2%20%E7%89%88%E6%9C%AC/</id>
+    <published>2020-09-18T08:26:34.000Z</published>
+    <updated>2023-03-15T11:10:14.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;如果你用到了一个库的 v2 版本，你依赖的另外一个库用到了该库的 v1 版本，而二者不兼容，该如何处理呢？&lt;/p&gt;
+&lt;p&gt;我之前在用到比如 &lt;code&gt;github.com/urfave/cli/v2&lt;/code&gt; 和</summary>
+        
+      
+    
+    
+    
+    
+    <category term="技术" scheme="https://www.gonever.com/tags/%E6%8A%80%E6%9C%AF/"/>
+    
+    <category term="Golang" scheme="https://www.gonever.com/tags/Golang/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Go 代码风格最佳实践</title>
+    <link href="https://www.gonever.com/2020/07/28/Go%20%E4%BB%A3%E7%A0%81%E9%A3%8E%E6%A0%BC%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/"/>
+    <id>https://www.gonever.com/2020/07/28/Go%20%E4%BB%A3%E7%A0%81%E9%A3%8E%E6%A0%BC%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</id>
+    <published>2020-07-28T11:38:45.000Z</published>
+    <updated>2023-03-10T15:15:55.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;今天阅读了&lt;a href=&quot;https://github.com/golang/go/wiki/CodeReviewComments#gofmt&quot;&gt;《Go Code Review Comments》&lt;/a&gt; 一文，该文明确了 Go</summary>
+        
+      
+    
+    
+    
+    
+    <category term="技术" scheme="https://www.gonever.com/tags/%E6%8A%80%E6%9C%AF/"/>
+    
+    <category term="Golang" scheme="https://www.gonever.com/tags/Golang/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>修改 Docker 和 docker-compose 下 MySQL 的默认字符集</title>
+    <link href="https://www.gonever.com/2020/06/19/%E4%BF%AE%E6%94%B9%20Docker%20%E5%92%8C%20docker-compose%20%E4%B8%8B%20MySQL%20%E7%9A%84%E9%BB%98%E8%AE%A4%E5%AD%97%E7%AC%A6%E9%9B%86/"/>
+    <id>https://www.gonever.com/2020/06/19/%E4%BF%AE%E6%94%B9%20Docker%20%E5%92%8C%20docker-compose%20%E4%B8%8B%20MySQL%20%E7%9A%84%E9%BB%98%E8%AE%A4%E5%AD%97%E7%AC%A6%E9%9B%86/</id>
+    <published>2020-06-19T08:21:35.000Z</published>
+    <updated>2023-03-14T08:59:19.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;docker 中 MySQL 的默认编码为 latin1，这会导致中文乱码，因此我们需要修改 MySQL 的默认字符集。&lt;/p&gt;
+&lt;p&gt;我们可以通过以下几种方式来修改 MySQL 的默认字符集。&lt;/p&gt;
+&lt;h2 id=&quot;修改配置文件&quot;&gt;&lt;a href=&quot;#修改配置文件&quot;</summary>
+        
+      
+    
+    
+    
+    
+    <category term="技术" scheme="https://www.gonever.com/tags/%E6%8A%80%E6%9C%AF/"/>
+    
+    <category term="Docker" scheme="https://www.gonever.com/tags/Docker/"/>
+    
+    <category term="MySQL" scheme="https://www.gonever.com/tags/MySQL/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Golang 的熔断器调研</title>
+    <link href="https://www.gonever.com/2020/04/20/Golang%20%E7%9A%84%E7%86%94%E6%96%AD%E5%99%A8%E8%B0%83%E7%A0%94/"/>
+    <id>https://www.gonever.com/2020/04/20/Golang%20%E7%9A%84%E7%86%94%E6%96%AD%E5%99%A8%E8%B0%83%E7%A0%94/</id>
+    <published>2020-04-20T06:18:32.000Z</published>
+    <updated>2023-03-11T03:33:26.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;什么是雪崩效应？&quot;&gt;&lt;a href=&quot;#什么是雪崩效应？&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    
+    <category term="技术" scheme="https://www.gonever.com/tags/%E6%8A%80%E6%9C%AF/"/>
+    
+    <category term="Golang" scheme="https://www.gonever.com/tags/Golang/"/>
+    
+  </entry>
+  
+</feed>
